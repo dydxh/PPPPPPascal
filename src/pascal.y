@@ -30,236 +30,237 @@
 %define parse.assert
 
 %token TERMINATE 0 "end of file"
-%token AND ARRAY ASSIGNMENT LITERAL COLON COMMA CONST TRUE FALSE
-%token DIV DO DOT DOTDOT DOWNTO ELSE EQUAL FOR FUNCTION
-%token GE GT IDENTIFIER END IF IN LBRAC LE LPAREN LT MINUS MOD NOT
-%token NOTEQUAL OF OR PBEGIN PLUS PROCEDURE PROGRAM RBRAC
-%token REALNUMBER RECORD REPEAT RPAREN SEMICOLON SLASH THEN
-%token TO TYPE UNTIL VAR WHILE STAR STARSTAR DIGSEQ FORWARD EXTERNAL
+%token PROGRAM IDENTIFIER CONST TYPE RECORD ARRAY VAR FUNCTION PROCEDURE PBEGIN END
+%token TRUE FALSE DIGSEQ SIGNEDDIGSEQ LITERAL REALNUMBER SIGNEDREALNUMBER SYS_TYPE SYS_FUNC
+%token IF THEN ELSE WHILE FOR REPEAT UNTIL DO TO DOWNTO OF
+%token AND OR XOR NOT MINUS PLUS MUL DIV MOD SLASH ASSIGNMENT LE GE LT GT EQUAL NOTEQUAL
+%token DOT DOTDOT STAR STARSTAR SEMICOLON COLON COMMA
+%token LBRAC RBRAC LPAREN RPAREN
+
+%nonassoc ELSE
+%nonassoc NOELSE
 
 %start program
 
 %%
-program: program_heading SEMICOLON block DOT TERMINATE
+program: program_header SEMICOLON proc_block DOT TERMINATE
     ;
 
-program_heading: PROGRAM IDENTIFIER
+program_header: PROGRAM IDENTIFIER
     ;
 
-identifier_list: identifier_list COMMA IDENTIFIER
-    | IDENTIFIER
+proc_block: const_decl_part type_decl_part var_decl_part subproc_decl_part compound_part
     ;
 
-block: constant_definition_part
-       variable_declaration_part
-       procedure_and_function_declaration_part
-       compound_statement
-    ;
-constant_definition_part: CONST constant_list
+const_decl_part: CONST const_decl_list
     |
     ;
 
-constant_list: constant_list constant_definition
-    | constant_definition
+const_decl_list: const_decl_list const_decl
+    | const_decl
     ;
 
-constant_definition: IDENTIFIER EQUAL signed_const SEMICOLON
+const_decl: IDENTIFIER EQUAL const_value SEMICOLON
     ;
 
-signed_const: sign_integer
-    | sign_real
+type_decl_part: TYPE type_decl_list
+    |
+    ;
+
+type_decl_list: type_decl_list type_decl
+    | type_decl
+    ;
+
+type_decl: IDENTIFIER EQUAL type_denoter SEMICOLON
+    ;
+
+type_denoter: common_type
+    | array_type
+    | record_type
+    ;
+
+common_type: IDENTIFIER
+    | SYS_TYPE
+    ;
+
+array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF type_denoter
+    | ARRAY LBRAC IDENTIFIER DOTDOT IDENTIFIER RBRAC OF type_denoter
+    ;
+
+record_type: RECORD field_decl_list END
+    ;
+
+field_decl_list: field_decl_list field_decl
+    | field_decl
+    ;
+
+field_decl: name_list COLON type_denoter SEMICOLON
+    ;
+
+name_list: name_list COMMA IDENTIFIER
+    | IDENTIFIER
+    ;
+
+var_decl_part: VAR var_decl_list
+    |
+    ;
+
+var_decl_list: var_decl_list var_decl
+    | var_decl
+    ;
+
+var_decl: name_list COLON type_denoter SEMICOLON
+    ;
+
+subproc_decl_part: subproc_decl_list
+    |
+    ;
+
+subproc_decl_list: subproc_decl_list subproc_decl
+    | subproc_decl
+    ;
+
+subproc_decl: procdure_decl
+    | func_decl
+    ;
+
+procdure_decl: procedure_header SEMICOLON proc_block SEMICOLON
+    ;
+
+procedure_header: PROCEDURE IDENTIFIER
+    | PROCEDURE IDENTIFIER formal_param_part
+    ;
+
+formal_param_part: LPAREN param_decl_list RPAREN
+    ;
+
+param_decl_list: param_decl_list SEMICOLON param_decl
+    | param_decl
+    ;
+
+param_decl: name_list COLON type_denoter
+    ;
+
+func_decl: function_header SEMICOLON proc_block SEMICOLON
+    ;
+
+function_header: FUNCTION IDENTIFIER COLON type_denoter
+    | FUNCTION IDENTIFIER formal_param_part COLON type_denoter
+    ;
+
+compound_part: PBEGIN stmt_list END
+    ;
+
+stmt_list: stmt_list stmt SEMICOLON
+    |
+    ;
+
+stmt: assignment_stmt
+    | repeat_stmt
+    | call_stmt
+    | if_stmt
+    | while_stmt
+    | for_stmt
+    | compound_part
+    ;
+
+
+assignment_stmt: IDENTIFIER ASSIGNMENT expression
+    | IDENTIFIER LBRAC expression RBRAC ASSIGNMENT expression
+    | IDENTIFIER DOT IDENTIFIER ASSIGNMENT expression
+    ;
+
+repeat_stmt: REPEAT stmt_list UNTIL expression
+    ;
+
+while_stmt: WHILE expression DO stmt
+    ;
+
+for_stmt: FOR IDENTIFIER ASSIGNMENT expression direction expression DO stmt
+    ;
+
+direction: TO
+    | DOWNTO
+    ;
+
+if_stmt: IF expression THEN stmt NOELSE
+    | IF expression THEN stmt ELSE stmt
+    ;
+
+call_stmt: IDENTIFIER params
+    | SYS_FUNC params
+    ;
+
+params: LPAREN parameter_list RPAREN
+    | LPAREN RPAREN
+    | 
+    ;
+
+parameter_list: parameter_list COMMA expression
+    | expression
+    ;
+
+expression: expr
+    | expression relop expr
+    ;
+
+expr: term addop expr
+    | term
+    ;
+
+term: factor
+    | term mulop factor
+    ;
+
+factor: primary
+    | primary STARSTAR factor
+    ;
+
+primary: IDENTIFIER
+    | IDENTIFIER LBRAC expression RBRAC
+    | IDENTIFIER DOT IDENTIFIER
+    | IDENTIFIER LPAREN RPAREN
+    | IDENTIFIER LPAREN arg_list RPAREN
+    | SYS_FUNC LPAREN arg_list RPAREN
+    | const_value
+    | LPAREN expression RPAREN
+    | NOT primary
+    | sign primary
+    ;
+
+arg_list: arg_list COMMA expression
+    | expression
+
+const_value: signed_number
+    | LITERAL
+    | TRUE
+    | FALSE
+    ;
+
+signed_number: signed_integer
+    | signed_real
+    ;
+
+signed_integer: DIGSEQ
+    | SIGNEDDIGSEQ
+    ;
+
+signed_real: SIGNEDREALNUMBER
+    | REALNUMBER
     ;
 
 sign: PLUS
     | MINUS
     ;
 
-type_denoter: IDENTIFIER
-    | array_type
-    ;
-
-array_type: ARRAY LBRAC sign_integer DOTDOT sign_integer RBRAC OF type_denoter
-    ;
-
-sign_integer: DIGSEQ
-    | sign DIGSEQ
-    ;
-
-sign_real: REALNUMBER
-    | sign REALNUMBER
-
-variable_declaration_part: VAR variable_declaration_list SEMICOLON
-    |
-    ;
-
-variable_declaration_list:
-   variable_declaration_list SEMICOLON variable_declaration
-    | variable_declaration
-    ;
-
-variable_declaration: identifier_list COLON type_denoter
-    ;
-
-procedure_and_function_declaration_part: proc_or_func_declaration_list SEMICOLON
-    |
-    ;
-
-proc_or_func_declaration_list: proc_or_func_declaration_list SEMICOLON proc_or_func_declaration
-    | proc_or_func_declaration
-    ;
-
-proc_or_func_declaration: procedure_declaration
-    | function_declaration
-    ;
-
-procedure_declaration: procedure_header SEMICOLON block
-    ;
-
-procedure_header: PROCEDURE IDENTIFIER
-    | PROCEDURE IDENTIFIER formal_parameter_list
-    ;
-
-formal_parameter_list: LPAREN parameter_decl_list RPAREN
-    ;
-
-parameter_decl_list: parameter_decl_list SEMICOLON param_decl
-    | param_decl
-    ;
-
-param_decl: identifier_list COLON type_denoter
-    ;
-
-function_declaration: function_header SEMICOLON block
-    ;
-
-function_header: FUNCTION IDENTIFIER COLON type_denoter
-    | FUNCTION IDENTIFIER formal_parameter_list COLON type_denoter
-    ;
-
-compound_statement: PBEGIN statement_sequence END
-    ;
-
-statement_sequence: statement_sequence SEMICOLON statement
-    | statement
-    ;
-
-statement: open_statement
-    | closed_statement
-    ;
-
-closed_statement: assignment_statement
-    | call_statement
-    | compound_statement
-    | repeat_statement
-    | closed_if_statement
-    | closed_while_statement
-    | closed_for_statement
-    |
-    ;
-
-open_statement: open_if_statement
-    | open_while_statement
-    | open_for_statement
-    ;
-
-repeat_statement: REPEAT statement_sequence UNTIL expression
-    ;
-
-open_while_statement: WHILE expression DO open_statement
-    ;
-
-closed_while_statement: WHILE expression DO closed_statement
-    ;
-
-open_for_statement: FOR IDENTIFIER ASSIGNMENT initial_value direction final_value DO open_statement
-    ;
-
-closed_for_statement: FOR IDENTIFIER ASSIGNMENT initial_value direction final_value DO closed_statement
-    ;
-
-initial_value: expression;
-
-direction: TO
-    | DOWNTO
-    ;
-
-final_value: expression;
-
-open_if_statement: IF expression THEN statement
-    | IF expression THEN closed_statement ELSE open_statement
-    ;
-
-closed_if_statement: IF expression THEN closed_statement ELSE closed_statement
-    ;
-
-assignment_statement: variable_access ASSIGNMENT expression
-    ;
-
-variable_access: IDENTIFIER
-    | indexed_variable
-    ;
-
-indexed_variable: variable_access LBRAC index_expression_list RBRAC
-    ;
-
-index_expression_list: index_expression_list COMMA index_expression
-    | index_expression
-    ;
-
-index_expression: expression;
-
-call_statement: IDENTIFIER params;
-
-params: LPAREN actual_parameter_list RPAREN
-    | LPAREN RPAREN
-    ;
-
-actual_parameter_list: actual_parameter_list COMMA expression
-    | expression
-    ;
-
-expression: simple_expression
-    | expression relop simple_expression
-    ;
-
-simple_expression: sign term
-    | term
-    | sign term addop simple_expression
-    | term addop simple_expression
-    ;
-
-term: exponentiation
-    | term mulop exponentiation
-    ;
-
-exponentiation: primary
-    | primary STARSTAR exponentiation
-    ;
-
-primary: variable_access
-    | unsigned_constant
-    | call_statement
-    | LPAREN expression RPAREN
-    | NOT primary
-    ;
-
-unsigned_constant: unsigned_number
-    | FALSE
-    | TRUE
-    | LITERAL;
-
-unsigned_number: unsigned_integer | unsigned_real;
-
-unsigned_integer: DIGSEQ;
-
-unsigned_real: REALNUMBER;
-
 addop: PLUS
     | MINUS
     | OR
+    | XOR
     ;
 
 mulop: STAR
+    | MUL
     | SLASH
     | DIV
     | MOD
@@ -272,7 +273,6 @@ relop: EQUAL
     | GT
     | LE
     | GE
-    | IN
     ;
 
 %%

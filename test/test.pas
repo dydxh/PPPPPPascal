@@ -15,7 +15,7 @@ const
 
 begin
     writeln(test);
-    writeln(foo2(1, 2, 1, 2))
+    writeln(foo2(1, 2, 1, 2));
 end;
 
 function fib(n : longint): longint;
@@ -24,7 +24,7 @@ var
 begin
     if n = 0 then
     begin
-        fib := 1
+        fib := 1;
     end 
     else if n = 1 then
     begin
