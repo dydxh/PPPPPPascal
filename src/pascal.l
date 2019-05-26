@@ -56,8 +56,10 @@ NQUOTE [^']
 "TO"        {std::cout << yytext;  return token::TO;}
 "TYPE"      {std::cout << yytext;  return token::TYPE;}
 "UNTIL"     {std::cout << yytext;  return token::UNTIL;}
-"VAR"       {std::cout << "Var "; return token::VAR;}
+"VAR"       {std::cout << yytext;  return token::VAR;}
 "WHILE"     {std::cout << yytext;  return token::WHILE;}
+"TRUE"      {std::cout << yytext;  return token::TRUE;}
+"FALSE"     {std::cout << yytext;  return token::FALSE;}
 [a-zA-Z]([a-zA-Z0-9])*  {std::cout << "IDD: " << yytext << " "; return token::IDENTIFIER;}
 
 ":="        {std::cout << yytext;  return token::ASSIGNMENT;}

@@ -30,7 +30,7 @@
 %define parse.assert
 
 %token TERMINATE 0 "end of file"
-%token AND ARRAY ASSIGNMENT LITERAL COLON COMMA CONST
+%token AND ARRAY ASSIGNMENT LITERAL COLON COMMA CONST TRUE FALSE
 %token DIV DO DOT DOTDOT DOWNTO ELSE EQUAL FOR FUNCTION
 %token GE GT IDENTIFIER END IF IN LBRAC LE LPAREN LT MINUS MOD NOT
 %token NOTEQUAL OF OR PBEGIN PLUS PROCEDURE PROGRAM RBRAC
@@ -244,6 +244,8 @@ primary: variable_access
     ;
 
 unsigned_constant: unsigned_number
+    | FALSE
+    | TRUE
     | LITERAL;
 
 unsigned_number: unsigned_integer | unsigned_real;
