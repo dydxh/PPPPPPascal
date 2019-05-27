@@ -21,6 +21,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src/ ${CMAKE_BINARY_DIR})
 file(GLOB SOURCE_FILES
     "src/*.cpp"
     "src/*.hpp"
+    "src/AST/*.hpp"
 )
 
 add_executable(${CMAKE_PROJECT_NAME}

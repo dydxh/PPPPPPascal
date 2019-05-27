@@ -31,7 +31,7 @@
 
 %token TERMINATE 0 "end of file"
 %token PROGRAM IDENTIFIER CONST TYPE RECORD ARRAY VAR FUNCTION PROCEDURE PBEGIN END
-%token TRUE FALSE DIGSEQ SIGNEDDIGSEQ LITERAL REALNUMBER SIGNEDREALNUMBER SYS_TYPE SYS_FUNC
+%token TRUE FALSE DIGSEQ SIGNEDDIGSEQ LITERAL REALNUMBER SIGNEDREALNUMBER simple_type SYS_FUNC
 %token IF THEN ELSE WHILE FOR REPEAT UNTIL DO TO DOWNTO OF
 %token AND OR XOR NOT MINUS PLUS MUL DIV MOD SLASH ASSIGNMENT LE GE LT GT EQUAL NOTEQUAL
 %token DOT DOTDOT STAR STARSTAR SEMICOLON COLON COMMA
@@ -74,17 +74,15 @@ type_decl_list: type_decl_list type_decl
 type_decl: IDENTIFIER EQUAL type_denoter SEMICOLON
     ;
 
-type_denoter: common_type
+type_denoter: IDENTIFIER
+    | simple_type
+    | STRING
     | array_type
     | record_type
     ;
 
-common_type: IDENTIFIER
-    | SYS_TYPE
-    ;
-
-array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF type_denoter
-    | ARRAY LBRAC IDENTIFIER DOTDOT IDENTIFIER RBRAC OF type_denoter
+array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF simple_type
+    | ARRAY LBRAC IDENTIFIER DOTDOT IDENTIFIER RBRAC OF simple_type
     ;
 
 record_type: RECORD field_decl_list END
@@ -94,7 +92,7 @@ field_decl_list: field_decl_list field_decl
     | field_decl
     ;
 
-field_decl: name_list COLON type_denoter SEMICOLON
+field_decl: name_list COLON simple_type SEMICOLON
     ;
 
 name_list: name_list COMMA IDENTIFIER
@@ -144,8 +142,8 @@ param_decl: name_list COLON type_denoter
 func_decl: function_header SEMICOLON proc_block SEMICOLON
     ;
 
-function_header: FUNCTION IDENTIFIER COLON type_denoter
-    | FUNCTION IDENTIFIER formal_param_part COLON type_denoter
+function_header: FUNCTION IDENTIFIER COLON simple_type
+    | FUNCTION IDENTIFIER formal_param_part COLON simple_type
     ;
 
 compound_part: PBEGIN stmt_list END

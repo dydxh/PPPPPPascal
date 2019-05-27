@@ -66,10 +66,10 @@ NQUOTE [^']
 "WRITELN"   {std::cout << yytext;  return token::SYS_FUNC;}
 "READ"      {std::cout << yytext;  return token::SYS_FUNC;}
 "READLN"    {std::cout << yytext;  return token::SYS_FUNC;}
-"INTEGER"   {std::cout << yytext;  return token::SYS_TYPE;}
-"BOOLEAN"   {std::cout << yytext;  return token::SYS_TYPE;}
-"REAL"      {std::cout << yytext;  return token::SYS_TYPE;}
-"STRING"    {std::cout << yytext;  return token::SYS_TYPE;}
+"INTEGER"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
+"BOOLEAN"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
+"REAL"      {std::cout << yytext;  return token::SIMPLE_TYPE;}
+"STRING"    {std::cout << yytext;  return token::STRING;}
 [a-zA-Z]([a-zA-Z0-9])*  {std::cout << "IDD: " << yytext << " "; return token::IDENTIFIER;}
 
 ":="        {std::cout << yytext;  return token::ASSIGNMENT;}
