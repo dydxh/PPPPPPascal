@@ -9,76 +9,76 @@
 namespace yapc {
     using CompoundStmtAST = ListAST<StmtAST>;
 
-    class IfStmtAST : public  StmtAST {
+    class IfStmtAST : public StmtAST {
     public:
-        std::unique_ptr<ExprAST> expr;
-        std::unique_ptr<CompoundStmtAST> stmt;
-        std::unique_ptr<CompoundStmtAST> else_stmt;
+        std::shared_ptr<ExprAST> expr;
+        std::shared_ptr<CompoundStmtAST> stmt;
+        std::shared_ptr<CompoundStmtAST> else_stmt;
 
-        IfStmtAST(std::unique_ptr<ExprAST>& expr, std::unique_ptr<CompoundStmtAST> stmt)
-            : expr(std::move(expr)), stmt(std::move(stmt)), else_stmt(nullptr) {}
-        IfStmtAST(std::unique_ptr<ExprAST>& expr, std::unique_ptr<CompoundStmtAST> stmt, std::unique_ptr<CompoundStmtAST> else_stmt)
-            : expr(std::move(expr)), stmt(std::move(stmt)), else_stmt(std::move(else_stmt)) {}
+        IfStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST> stmt)
+            : expr(expr), stmt(stmt), else_stmt(nullptr) {}
+        IfStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST> stmt, std::shared_ptr<CompoundStmtAST> else_stmt)
+            : expr(expr), stmt(stmt), else_stmt(else_stmt) {}
         ~IfStmtAST() = default;
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class WhileStmtAST : public StmtAST {
     public:
-        std::unique_ptr<ExprAST> expr;
-        std::unique_ptr<CompoundStmtAST> stmt;
+        std::shared_ptr<ExprAST> expr;
+        std::shared_ptr<CompoundStmtAST> stmt;
 
-        WhileStmtAST(std::unique_ptr<ExprAST>& expr, std::unique_ptr<CompoundStmtAST>& stmt) : expr(std::move(expr)), stmt(std::move(stmt)) {}
+        WhileStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     enum class Direct {
         TO, DOWNTO
     };
 
-    class ForStmtAST : public  StmtAST {
+    class ForStmtAST : public StmtAST {
     public:
         Direct direct;
-        std::unique_ptr<IdentifierAST> identifier;
-        std::unique_ptr<ExprAST> start_val;
-        std::unique_ptr<ExprAST> end_val;
-        std::unique_ptr<CompoundStmtAST> stmt;
+        std::shared_ptr<IdentifierAST> identifier;
+        std::shared_ptr<ExprAST> start_val;
+        std::shared_ptr<ExprAST> end_val;
+        std::shared_ptr<CompoundStmtAST> stmt;
 
-        ForStmtAST(Direct dir, std::unique_ptr<IdentifierAST>& identifier, std::unique_ptr<ExprAST>& startval, std::unique_ptr<ExprAST>& endval, std::unique_ptr<CompoundStmtAST>& stmt)
-            : direct(dir), identifier(std::move(identifier)), start_val(std::move(startval)), end_val(std::move(endval)), stmt(std::move(stmt)) {}
+        ForStmtAST(Direct dir, std::shared_ptr<IdentifierAST>& identifier, std::shared_ptr<ExprAST>& startval, std::shared_ptr<ExprAST>& endval, std::shared_ptr<CompoundStmtAST>& stmt)
+            : direct(dir), identifier(identifier), start_val(startval), end_val(endval), stmt(stmt) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class RepeatStmtAST : public StmtAST {
     public:
-        std::unique_ptr<ExprAST> expr;
-        std::unique_ptr<CompoundStmtAST> stmt;
+        std::shared_ptr<ExprAST> expr;
+        std::shared_ptr<CompoundStmtAST> stmt;
 
-        RepeatStmtAST(std::unique_ptr<ExprAST>& expr, std::unique_ptr<CompoundStmtAST>& stmt) : expr(std::move(expr)), stmt(std::move(stmt)) {}
+        RepeatStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class CallStmtAST : public StmtAST {
     public:
-        std::unique_ptr<FuncCallAST> func;
+        std::shared_ptr<FuncCallAST> func;
 
-        CallStmtAST(std::unique_ptr<CallStmtAST> func) : func(std::move(func)) {}
+        CallStmtAST(std::shared_ptr<FuncCallAST> func) : func(func) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class AssignStmtAST : public StmtAST {
     public:
-        std::unique_ptr<ExprAST> lhs;
-        std::unique_ptr<ExprAST> rhs;
+        std::shared_ptr<ExprAST> lhs;
+        std::shared_ptr<ExprAST> rhs;
 
-        AssignStmtAST(std::unique_ptr<ExprAST>& lval, std::unique_ptr<ExprAST>& rval) : lhs(std::move(lval)), rhs(std::move(rval)) {}
+        AssignStmtAST(std::shared_ptr<ExprAST>& lval, std::shared_ptr<ExprAST>& rval) : lhs(lval), rhs(rval) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 }
 

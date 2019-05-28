@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <list>
+#include <sstream>
 
 #include "basicast.hpp"
 #include "identifier.hpp"
@@ -52,28 +53,28 @@ namespace yapc {
         }
 
     protected:
-        std::list<std::unique_ptr<VarDeclAST>> fields;
+        std::list<std::shared_ptr<VarDeclAST>> fields;
     };
 
     class ArrayTypeAST : public TypeAST {
     public:
-        std::unique_ptr<ExprAST> StartValue, EndValue;
-        std::unique_ptr<TypeAST> ItemType;
+        std::shared_ptr<ExprAST> StartValue, EndValue;
+        Type ItemType;
 
-        ArrayTypeAST(std::unique_ptr<ExprAST>&& startvalue, std::unique_ptr<ExprAST>&& endvalue, std::unique_ptr<TypeAST>&& itemtype) {
-            StartValue = std::move(startvalue);
-            EndValue = std::move(endvalue);
-            ItemType = std::move(itemtype);
+        ArrayTypeAST(std::shared_ptr<ExprAST>&& startvalue, std::shared_ptr<ExprAST>&& endvalue, Type itemtype) {
+            StartValue = startvalue;
+            EndValue = endvalue;
+            ItemType = itemtype;
             this->type = Type::ARRAY;
         }
     };
     
     class DeclTypeAST : public TypeAST {
     public:
-        std::unique_ptr<IdentifierAST> name;
+        std::shared_ptr<IdentifierAST> name;
         
-        DeclTypeAST(std::unique_ptr<IdentifierAST>&& ID) {
-            name = std::move(ID);
+        DeclTypeAST(std::shared_ptr<IdentifierAST>&& ID) {
+            name = ID;
         }
         ~DeclTypeAST() = default;
     };
@@ -82,60 +83,67 @@ namespace yapc {
     public:
         Type type = Type::UNKNOWN;
 
-        ConstAST() = default;
+        ConstAST() {};
     };
 
-    class BooleanAST : public TypeAST {
+    class BooleanAST : public ConstAST {
     public:
         bool val;
 
+        BooleanAST() : val(false) {
+            this->type = Type::BOOLEAN;
+        }
         BooleanAST(bool val) : val(val) {
             this->type = Type::BOOLEAN;
         }
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
-    class IntegerAST : public TypeAST {
+    class IntegerAST : public ConstAST {
     public:
         int val;
 
+        IntegerAST() : val(0) {
+            this->type = Type::INTEGER;
+        }
         IntegerAST(int val) : val(val) {
             this->type = Type::INTEGER;
         }
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class RealAST : public ConstAST {
     public:
         double val;
 
-        RealAST(double val) : val(val) {
+        RealAST() : val(0) {
             this->type = Type::REAL;
         }
+        RealAST(const double& val) : val(val) {
+            this->type = Type::REAL;
+        }
+        ~RealAST() {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
     
     class StringAST : public ConstAST {
     public:
         std::string val;
 
+        StringAST() : val("") {
+            this->type = Type::STRING;
+        }
         StringAST(const char* val) : val(val) {
             this->type = Type::STRING;
         }
+        StringAST(const std::string& val) : val(val) {
+            this->type = Type::STRING;
+        }
 
-        genValue codegen(genContext context) override;
-    };
-
-    class LongintAST : public ConstAST {
-    public:
-        long long val;
-        
-        LongintAST(long long val) : val(val) {}
-
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 }
 

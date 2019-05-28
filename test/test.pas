@@ -6,7 +6,8 @@ var
 
 procedure foo;
 const
-    test = 1;
+    test = 1.3;
+    teststr = 'dydxh';
     function foo2(a, b: longint; e, c: Real) : longint;
     begin
         writeln(test + 233);
@@ -36,6 +37,8 @@ begin
 end;
 begin
     for a := 1 to 10 do begin
+        e := 2;
+        write(e);
         write('fib ');
         write(a);
         write(' : ');

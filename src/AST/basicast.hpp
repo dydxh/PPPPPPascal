@@ -3,6 +3,7 @@
 
 #include <list>
 #include <memory>
+#include <iostream>
 #include <cassert>
 
 namespace yapc {
@@ -11,17 +12,17 @@ namespace yapc {
 
     class BasicAST {
     public:
-        virtual ~BasicAST() = default;
+        ~BasicAST() {};
 
-        virtual genValue codegen(genContext context) = 0;
+        //virtual genValue codegen(genContext context) = 0;
     };
 
-    using BasicPtr = std::unique_ptr<BasicAST>;
+    using BasicPtr = std::shared_ptr<BasicAST>;
 
     class ExprAST : public BasicAST {
     public:
-        ExprAST() = default;
-        ~ExprAST() = default;
+        ExprAST() {};
+        ~ExprAST() {};
     };
 
     class StmtAST : public BasicAST {
@@ -34,31 +35,38 @@ namespace yapc {
     class ListAST : public BasicAST {
     public:
         ListAST() {}
-        ListAST(std::unique_ptr<T>& value) {
-            children.push_back(std::move(value));
+        ListAST(std::shared_ptr<T>& value) {
+            children.push_back(value);
         }
-        ListAST(const std::unique_ptr<T>&& value) {
-            children.push_back(std::move(value));
+        ListAST(const std::shared_ptr<T>&& value) {
+            children.push_back(value);
         }
         ~ListAST() = default;
 
-        void AppendChild(std::list<std::unique_ptr<T>>& orphan) {
-            children.push_back(std::move(orphan));
+        void AppendChild(std::list<std::shared_ptr<T>>& orphan) {
+            children.push_back(orphan);
         }
 
-        void AppendChild(const std::list<std::unique_ptr<T>>&& orphan) {
-            children.push_back(std::move(orphan));
+        void AppendChild(const std::list<std::shared_ptr<T>>&& orphan) {
+            children.push_back(orphan);
         }
 
-        void MergeAST(std::list<std::unique_ptr<T>>& orphans) {
+        void MergeAST(std::list<std::shared_ptr<T>>& orphans) {
             for(auto& e : orphans) {
-                AppendChild(std::move(e));
+                AppendChild(e);
             }
         }
 
+        std::list<std::shared_ptr<T>>& get_children() {return children;}
+
     protected:
-        std::list<std::unique_ptr<T>> children;
+        std::list<std::shared_ptr<T>> children;
     };
+
+    template<typename T, typename... Args>
+    std::shared_ptr<T> MakeAST(Args&&... args) {
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
 }
 
 #endif

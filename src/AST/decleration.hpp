@@ -12,46 +12,47 @@ namespace yapc {
 
     class VarDeclAST : public DeclAST {
     public:
-        std::unique_ptr<IdentifierAST> name;
-        std::unique_ptr<TypeAST> type;
+        std::shared_ptr<IdentifierAST> name;
+        std::shared_ptr<TypeAST> type;
 
-        VarDeclAST(std::unique_ptr<IdentifierAST>& name, std::unique_ptr<TypeAST>& type) : name(std::move(name)), type(std::move(type)) {}
+        VarDeclAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class ConstDeclAST : public DeclAST {
     public:
-        std::unique_ptr<IdentifierAST> name;
-        std::unique_ptr<ConstAST> value;
+        std::shared_ptr<IdentifierAST> name;
+        std::shared_ptr<ConstAST> value;
 
-        ConstDeclAST(std::unique_ptr<IdentifierAST>& name, std::unique_ptr<ConstAST>& value) : name(std::move(name)), value(std::move(value)) {}
+        ConstDeclAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<ConstAST>& value) : name(name), value(value) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class TypeDeclAST : public DeclAST {
     public:
-        std::unique_ptr<IdentifierAST> name;
-        std::unique_ptr<TypeAST> type;
+        std::shared_ptr<IdentifierAST> name;
+        std::shared_ptr<TypeAST> type;
 
-        TypeDeclAST(std::unique_ptr<IdentifierAST>& name, std::unique_ptr<TypeAST>& type) : name(std::move(name)), type(std::move(type)) {}
+        TypeDeclAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     using TypeDeclListAST = ListAST<TypeDeclAST>;
     using VarDeclListAST = ListAST<VarDeclAST>;
     using ConstDeclListAST = ListAST<ConstDeclAST>;
+    using IdentifierListAST = ListAST<IdentifierAST>;
 
     class ParamAST : public BasicAST {
     public:
-        std::unique_ptr<IdentifierAST> name;
-        std::unique_ptr<TypeAST> type;
+        std::shared_ptr<IdentifierAST> name;
+        std::shared_ptr<TypeAST> type;
 
-        ParamAST(std::unique_ptr<IdentifierAST>& name, std::unique_ptr<TypeAST>& type) : name(std::move(name)), type(std::move(type)) {}
+        ParamAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     using ParamListAST = ListAST<ParamAST>;
@@ -60,38 +61,38 @@ namespace yapc {
 //    class ParamListAST : public BasicAST {
 //    public:
 //        ParamListAST() {}
-//        ParamListAST(std::unique_ptr<ParamAST>& value) {
-//            children.push_back(std::move(value));
+//        ParamListAST(std::shared_ptr<ParamAST>& value) {
+//            children.push_back(value);
 //        }
-//        ParamListAST(const std::unique_ptr<ParamListAST>&& value) {
-//            children.push_back(std::move(value));
+//        ParamListAST(const std::shared_ptr<ParamListAST>&& value) {
+//            children.push_back(value);
 //        }
 //        ~ParamListAST() = default;
 //
-//        void AppendChild(std::list<std::unique_ptr<ParamAST>>& orphan) {
-//            children.push_back(std::move(orphan));
+//        void AppendChild(std::list<std::shared_ptr<ParamAST>>& orphan) {
+//            children.push_back(orphan);
 //        }
 //
-//        void AppendChild(const std::list<std::unique_ptr<ParamAST>>&& orphan) {
-//            children.push_back(std::move(orphan));
+//        void AppendChild(const std::list<std::shared_ptr<ParamAST>>&& orphan) {
+//            children.push_back(orphan);
 //        }
 //
-//        void MergeAST(std::list<std::unique_ptr<ParamAST>>& orphans) {
+//        void MergeAST(std::list<std::shared_ptr<ParamAST>>& orphans) {
 //            for(auto& e : orphans) {
-//                AppendChild(std::move(e));
+//                AppendChild(e);
 //            }
 //        }
 //
 //    protected:
-//        std::list<std::unique_ptr<ParamAST>> children;
+//        std::list<std::shared_ptr<ParamAST>> children;
 //    };
 //
 //    class ArgsListAST : public BasicAST {
 //    public:
 //        ArgsListAST() {}
-//        ArgsListAST(std::unique_ptr<ExprAST>&)
+//        ArgsListAST(std::shared_ptr<ExprAST>&)
 //    protected:
-//        std::list<std::unique_ptr<ExprAST>> children;
+//        std::list<std::shared_ptr<ExprAST>> children;
 //    };
 }
 

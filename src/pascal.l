@@ -2,8 +2,10 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdio>
+#include <string>
 #include <stdexcept>
 #include "Scanner.hpp"
+#include "AST/basicast.hpp"
 
 #undef YY_DECL
 #define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval, yapc::Parser::location_type* loc)
@@ -48,7 +50,7 @@ NQUOTE [^']
 "NOT"       {std::cout << yytext;  return token::NOT;}
 "OF"        {std::cout << yytext;  return token::OF;}
 "OR"        {std::cout << yytext;  return token::OR;}
-"XOR"        {std::cout << yytext;  return token::XOR;}
+"XOR"       {std::cout << yytext;  return token::XOR;}
 "BEGIN"     {std::cout << yytext;  return token::PBEGIN;}
 "PROCEDURE" {std::cout << yytext;  return token::PROCEDURE;}
 "PROGRAM"   {std::cout << yytext;  return token::PROGRAM;}
@@ -59,8 +61,8 @@ NQUOTE [^']
 "UNTIL"     {std::cout << yytext;  return token::UNTIL;}
 "VAR"       {std::cout << yytext;  return token::VAR;}
 "WHILE"     {std::cout << yytext;  return token::WHILE;}
-"TRUE"      {std::cout << yytext;  return token::TRUE;}
-"FALSE"     {std::cout << yytext;  return token::FALSE;}
+"TRUE"      {std::cout << yytext; yylval->build<bool>(true);  return token::TRUE;}
+"FALSE"     {std::cout << yytext; yylval->build<bool>(false); return token::FALSE;}
 "RECORD"    {std::cout << yytext;  return token::RECORD;}
 "WRITE"     {std::cout << yytext;  return token::SYS_FUNC;}
 "WRITELN"   {std::cout << yytext;  return token::SYS_FUNC;}
@@ -71,15 +73,16 @@ NQUOTE [^']
 "BOOLEAN"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
 "REAL"      {std::cout << yytext;  return token::SIMPLE_TYPE;}
 "STRING"    {std::cout << yytext;  return token::STRING;}
-[a-zA-Z]([a-zA-Z0-9])*  {std::cout << "IDD: " << yytext << " "; return token::IDENTIFIER;}
-
+[+|-][0-9]+      {std::cout << "Sign Integer: " << yytext; yylval->build<int>(std::stoi(yytext)); return token::SIGNEDDIGSEQ;}
+[0-9]+      {yylval->build<int>(std::stoi(yytext)); std::cout << "Integer: " << yytext; return token::DIGSEQ;}
+[+|-][0-9]+"."[0-9]+   {std::cout << "Sign Real Number: " << yytext; yylval->build<double>(std::stod(yytext)); return token::SIGNEDREALNUMBER;}
+[0-9]+"."[0-9]+   {std::cout << "Real Number: " << yytext; yylval->build<double>(std::stod(yytext)); return token::REALNUMBER;}
+'({NQUOTE}|'')+'  {std::cout << "STRING: " << yytext; yytext[yyleng - 1] = 0; yylval->build<std::string>(std::string(yytext + 1)); return token::LITERAL;}
+[a-zA-Z]([a-zA-Z0-9])*  {std::cout << "IDD: " << yytext << " "; yytext[yyleng - 1] = 0; yylval->build<std::string>(std::string(yytext + 1)); return token::IDENTIFIER;}
 ":="        {std::cout << yytext;  return token::ASSIGNMENT;}
-'({NQUOTE}|'')+'  {std::cout << "STRING: " << yytext;  return token::LITERAL;}
 ":"         {std::cout << yytext;  return token::COLON;}
 ","         {std::cout << yytext; return token::COMMA;}
-[+|-][0-9]+      {std::cout << "Sign Integer: " << yytext;  return token::SIGNEDDIGSEQ;}
-[0-9]+      {std::cout << "Integer: " << yytext;  return token::DIGSEQ;}
-"."         {std::cout << yytext; return token::DOT;}
+"."         {std::cout << yytext;  return token::DOT;}
 ".."        {std::cout << yytext;  return token::DOTDOT;}
 "="         {std::cout << yytext;  return token::EQUAL;}
 ">="        {std::cout << yytext;  return token::GE;}
@@ -92,8 +95,6 @@ NQUOTE [^']
 "<>"        {std::cout << yytext;  return token::NOTEQUAL;}
 "+"         {std::cout << yytext;  return token::PLUS;}
 "]"         {std::cout << yytext;  return token::RBRAC;}
-[+|-][0-9]+"."[0-9]+   {std::cout << "Sign Real Number: " << yytext;  return token::SIGNEDREALNUMBER;}
-[0-9]+"."[0-9]+   {std::cout << "Real Number: " << yytext;  return token::REALNUMBER;}
 ")"         {std::cout << yytext;  return token::RPAREN;}
 ";"         {std::cout << yytext;  return token::SEMICOLON;}
 "/"         {std::cout << yytext;  return token::SLASH;}

@@ -16,40 +16,40 @@ namespace yapc {
 
     class ProgHeadAST : public BasicAST {
     public:
-        std::unique_ptr<IdentifierAST> name;
-        std::unique_ptr<ParamListAST> params;
+        std::shared_ptr<IdentifierAST> name;
+        std::shared_ptr<ParamListAST> params;
         Type type;
 
-        ProgHeadAST(std::unique_ptr<IdentifierAST>& name, std::unique_ptr<ParamListAST>& param) : name(std::move(name)), params(std::move(param)) {}
+        ProgHeadAST(Type type, std::shared_ptr<IdentifierAST>& name, std::shared_ptr<ParamListAST>& param) : type(type), name(name), params(param) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     using ProgListAST = ListAST<ProgramAST>;
 
     class ProgBlockAST : public BasicAST {
     public:
-        std::unique_ptr<ConstDeclListAST> const_part;
-        std::unique_ptr<TypeDeclListAST> type_part;
-        std::unique_ptr<VarDeclListAST> var_part;
-        std::unique_ptr<ProgListAST> prog_part;
+        std::shared_ptr<ConstDeclListAST> const_part;
+        std::shared_ptr<TypeDeclListAST> type_part;
+        std::shared_ptr<VarDeclListAST> var_part;
+        std::shared_ptr<ProgListAST> prog_part;
 
-        ProgBlockAST(std::unique_ptr<ConstDeclAST>& constpart, std::unique_ptr<TypeDeclAST>& typepart,
-                     std::unique_ptr<VarDeclListAST>& varpart, std::unique_ptr<ProgListAST>& progpart)
+        ProgBlockAST(std::shared_ptr<ConstDeclListAST>& constpart, std::shared_ptr<TypeDeclListAST>& typepart,
+                     std::shared_ptr<VarDeclListAST>& varpart, std::shared_ptr<ProgListAST>& progpart)
                      : const_part(constpart), type_part(typepart), var_part(varpart), prog_part(progpart) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 
     class ProgramAST : public  BasicAST {
     public:
-        std::unique_ptr<ProgHeadAST> proghead;
-        std::unique_ptr<ProgBlockAST> progblock;
+        std::shared_ptr<ProgHeadAST> proghead;
+        std::shared_ptr<ProgBlockAST> progblock;
 
-        ProgramAST(std::unique_ptr<ProgHeadAST>& prog_head, std::unique_ptr<ProgBlockAST>& prog_block)
+        ProgramAST(std::shared_ptr<ProgHeadAST>& prog_head, std::shared_ptr<ProgBlockAST>& prog_block)
             : proghead(prog_head), progblock(prog_block) {}
 
-        genValue codegen(genContext context) override;
+        //genValue codegen(genContext context) override;
     };
 }
 
