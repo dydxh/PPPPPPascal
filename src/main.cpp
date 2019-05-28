@@ -11,8 +11,9 @@ int main(const int argc, const char** argv) {
     }
     
     yapc::Driver* driver;
+    yapc::Context context;
     try {
-        driver = new yapc::Driver;
+        driver = new yapc::Driver(context);
     }
     catch(std::bad_alloc& msg) {
         std::cerr << "Failed to allocate driver: (" << msg.what() << "), exit." << std::endl;

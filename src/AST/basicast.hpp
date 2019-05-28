@@ -9,32 +9,11 @@ namespace yapc {
     using genValue = int;
     using genContext = int;
 
-    class BasicAST : public std::enable_shared_from_this<BasicAST> {
+    class BasicAST {
     public:
         virtual ~BasicAST() = default;
 
         virtual genValue codegen(genContext context) = 0;
-
-        virtual bool child_exist() {return true;}
-
-        void append_child(const std::unique_ptr<BasicAST>& orphan) {
-            orphan->father = this->shared_from_this();
-            this->children.push_back(std::move(orphan));
-        }
-
-        void append_child(std::unique_ptr<BasicAST>&& orphan) {
-            orphan->father = this->shared_from_this();
-            this->children.push_back(std::move(orphan));
-        }
-
-        void merge_AST(const std::list<std::unique_ptr<BasicAST>>& orphans) {
-            for(const auto &e : orphans)
-                this->append_child(std::move(e));
-        }
-
-    protected:
-        std::list<std::unique_ptr<BasicAST>> children;
-        std::shared_ptr<BasicAST> father;
     };
 
     using BasicPtr = std::unique_ptr<BasicAST>;
@@ -43,8 +22,42 @@ namespace yapc {
     public:
         ExprAST() = default;
         ~ExprAST() = default;
+    };
 
-        bool child_exist() {return false;}
+    class StmtAST : public BasicAST {
+    public:
+        StmtAST() = default;
+        ~StmtAST() = default;
+    };
+
+    template<typename T>
+    class ListAST : public BasicAST {
+    public:
+        ListAST() {}
+        ListAST(std::unique_ptr<T>& value) {
+            children.push_back(std::move(value));
+        }
+        ListAST(const std::unique_ptr<T>&& value) {
+            children.push_back(std::move(value));
+        }
+        ~ListAST() = default;
+
+        void AppendChild(std::list<std::unique_ptr<T>>& orphan) {
+            children.push_back(std::move(orphan));
+        }
+
+        void AppendChild(const std::list<std::unique_ptr<T>>&& orphan) {
+            children.push_back(std::move(orphan));
+        }
+
+        void MergeAST(std::list<std::unique_ptr<T>>& orphans) {
+            for(auto& e : orphans) {
+                AppendChild(std::move(e));
+            }
+        }
+
+    protected:
+        std::list<std::unique_ptr<T>> children;
     };
 }
 

@@ -8,6 +8,7 @@
 %locations
 
 %code requires {
+    #include "AST/expr.hpp"
     #include <iostream>
     #include <string>
     #include <stdexcept>
@@ -31,11 +32,14 @@
 
 %token TERMINATE 0 "end of file"
 %token PROGRAM IDENTIFIER CONST TYPE RECORD ARRAY VAR FUNCTION PROCEDURE PBEGIN END
-%token TRUE FALSE DIGSEQ SIGNEDDIGSEQ LITERAL REALNUMBER SIGNEDREALNUMBER simple_type SYS_FUNC
+%token TRUE FALSE DIGSEQ SIGNEDDIGSEQ LITERAL REALNUMBER SIGNEDREALNUMBER SIMPLE_TYPE STRING SYS_FUNC
 %token IF THEN ELSE WHILE FOR REPEAT UNTIL DO TO DOWNTO OF
 %token AND OR XOR NOT MINUS PLUS MUL DIV MOD SLASH ASSIGNMENT LE GE LT GT EQUAL NOTEQUAL
 %token DOT DOTDOT STAR STARSTAR SEMICOLON COLON COMMA
 %token LBRAC RBRAC LPAREN RPAREN
+
+%type <yapc::UnaryOp> sign
+%type <yapc::BinaryOp> relop addop mulop
 
 %nonassoc ELSE
 %nonassoc NOELSE
@@ -75,14 +79,14 @@ type_decl: IDENTIFIER EQUAL type_denoter SEMICOLON
     ;
 
 type_denoter: IDENTIFIER
-    | simple_type
+    | SIMPLE_TYPE
     | STRING
     | array_type
     | record_type
     ;
 
-array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF simple_type
-    | ARRAY LBRAC IDENTIFIER DOTDOT IDENTIFIER RBRAC OF simple_type
+array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF SIMPLE_TYPE
+    | ARRAY LBRAC IDENTIFIER DOTDOT IDENTIFIER RBRAC OF SIMPLE_TYPE
     ;
 
 record_type: RECORD field_decl_list END
@@ -92,7 +96,7 @@ field_decl_list: field_decl_list field_decl
     | field_decl
     ;
 
-field_decl: name_list COLON simple_type SEMICOLON
+field_decl: name_list COLON SIMPLE_TYPE SEMICOLON
     ;
 
 name_list: name_list COMMA IDENTIFIER
@@ -142,8 +146,8 @@ param_decl: name_list COLON type_denoter
 func_decl: function_header SEMICOLON proc_block SEMICOLON
     ;
 
-function_header: FUNCTION IDENTIFIER COLON simple_type
-    | FUNCTION IDENTIFIER formal_param_part COLON simple_type
+function_header: FUNCTION IDENTIFIER COLON SIMPLE_TYPE
+    | FUNCTION IDENTIFIER formal_param_part COLON SIMPLE_TYPE
     ;
 
 compound_part: PBEGIN stmt_list END
@@ -247,30 +251,30 @@ signed_real: SIGNEDREALNUMBER
     | REALNUMBER
     ;
 
-sign: PLUS
-    | MINUS
+sign: PLUS {$$ = yapc::UnaryOp::POS;}
+    | MINUS {$$ = yapc::UnaryOp::NEG;}
     ;
 
-addop: PLUS
-    | MINUS
-    | OR
-    | XOR
+addop: PLUS {$$ = yapc::BinaryOp::ADD;}
+    | MINUS {$$ = yapc::BinaryOp::SUB;}
+    | OR  {$$ = yapc::BinaryOp::OR;}
+    | XOR {$$ = yapc::BinaryOp::XOR;}
     ;
 
-mulop: STAR
-    | MUL
-    | SLASH
-    | DIV
-    | MOD
-    | AND
+mulop: STAR {$$ = yapc::BinaryOp::MUL;}
+    | MUL {$$ = yapc::BinaryOp::MUL;}
+    | SLASH {$$ = yapc::BinaryOp::SLASH;}
+    | DIV {$$ = yapc::BinaryOp::DIV;}
+    | MOD {$$ = yapc::BinaryOp::MOD;}
+    | AND {$$ = yapc::BinaryOp::AND;}
     ;
 
-relop: EQUAL
-    | NOTEQUAL
-    | LT
-    | GT
-    | LE
-    | GE
+relop: EQUAL {$$ = yapc::BinaryOp::EQ;}
+    | NOTEQUAL {$$ = yapc::BinaryOp::NE;}
+    | LT {$$ = yapc::BinaryOp::LT;}
+    | GT {$$ = yapc::BinaryOp::GT;}
+    | LE {$$ = yapc::BinaryOp::LE;}
+    | GE {$$ = yapc::BinaryOp::GE;}
     ;
 
 %%

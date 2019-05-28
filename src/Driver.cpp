@@ -2,6 +2,8 @@
 
 #include "Driver.hpp"
 
+yapc::Driver::Driver(yapc::Context &context) : context(context) {}
+
 yapc::Driver::~Driver() {
     delete(scanner);
     scanner = nullptr;

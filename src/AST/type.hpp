@@ -1,12 +1,19 @@
 #ifndef yapc_ast_type
 #define yapc_ast_type
 
+#include <memory>
+#include <iostream>
+#include <list>
+
 #include "basicast.hpp"
 #include "identifier.hpp"
+#include "decleration.hpp"
 
 namespace yapc {
+    class VarDeclAST;
+
     enum class Type {
-        UNKNOWN, VOID, INTEGER, REAL, STRING, ARRAY, RECORD, BOOLEAN
+        UNKNOWN, VOID, INTEGER, REAL, STRING, ARRAY, RECORD, BOOLEAN, LONGINT
     };
 
     class TypeAST : public BasicAST {
@@ -15,8 +22,6 @@ namespace yapc {
 
         TypeAST() = default;
         ~TypeAST() = default;
-
-        genValue codegen(genContext context) override;
     };
 
     class PrimaryTypeAST : public TypeAST {
@@ -45,6 +50,9 @@ namespace yapc {
         RecordTypeAST() {
             this->type = Type::RECORD;
         }
+
+    protected:
+        std::list<std::unique_ptr<VarDeclAST>> fields;
     };
 
     class ArrayTypeAST : public TypeAST {
@@ -117,6 +125,15 @@ namespace yapc {
         StringAST(const char* val) : val(val) {
             this->type = Type::STRING;
         }
+
+        genValue codegen(genContext context) override;
+    };
+
+    class LongintAST : public ConstAST {
+    public:
+        long long val;
+        
+        LongintAST(long long val) : val(val) {}
 
         genValue codegen(genContext context) override;
     };

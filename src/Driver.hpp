@@ -3,12 +3,14 @@
 
 #include "Scanner.hpp"
 #include "Parser.hpp"
+#include "context.hpp"
 
 namespace yapc {
 
 class Driver {
 public:
-    Driver() = default;
+    Context& context;
+    explicit Driver(Context& context);
     ~Driver();
     bool Parse(const std::string& filename);
 

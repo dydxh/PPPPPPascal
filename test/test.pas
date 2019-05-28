@@ -22,7 +22,7 @@ function fib(n : longint): longint;
 var
     e, f, g, h : array [-5..10] of real;
 begin
-    if n = 0 then
+    if n >= 0 then
     begin
         fib := 1;
     end 

@@ -67,6 +67,7 @@ NQUOTE [^']
 "READ"      {std::cout << yytext;  return token::SYS_FUNC;}
 "READLN"    {std::cout << yytext;  return token::SYS_FUNC;}
 "INTEGER"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
+"LONGINT"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
 "BOOLEAN"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
 "REAL"      {std::cout << yytext;  return token::SIMPLE_TYPE;}
 "STRING"    {std::cout << yytext;  return token::STRING;}

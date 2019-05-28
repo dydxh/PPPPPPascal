@@ -1,14 +1,15 @@
-//
-// Created by dydxh on 5/28/19.
-//
-
 #ifndef yapc_ast_expr
 #define yapc_ast_expr
 
 #include "basicast.hpp"
 #include "identifier.hpp"
+#include "decleration.hpp"
 
 namespace yapc {
+    enum class SysFunc {
+        READ, WRITE, READLN, WRITELN
+    };
+
     enum class UnaryOp {
         NEG, POS, NOT
     };
@@ -38,11 +39,7 @@ namespace yapc {
         UnaryOp op;
         std::unique_ptr<ExprAST> rhs;
 
-        UnaryExprAST(UnaryOp op, std::unique_ptr<ExprAST>& val) : op(op), rhs(std::move(rhs)) {}
-    };
-
-    class FuncCallAST : public ExprAST {
-        
+        UnaryExprAST(UnaryOp op, std::unique_ptr<ExprAST>& val) : op(op), rhs(std::move(val)) {}
     };
 
     class ArrayAccessAST : public ExprAST {
@@ -66,6 +63,38 @@ namespace yapc {
             field = std::move(field);
         }
     };
+
+    class FuncCallAST : public ExprAST {
+    public:
+        std::unique_ptr<FuncCallAST> funccall;
+
+        FuncCallAST() = default;
+        FuncCallAST(std::unique_ptr<FuncCallAST>& call_stmt) : funccall(std::move(call_stmt)) {}
+
+        genValue codegen(genContext context) override;
+    };
+
+    class CustomFuncAST : public FuncCallAST {
+    public:
+        std::unique_ptr<IdentifierAST> name;
+        std::unique_ptr<ArgListAST> args;
+
+        CustomFuncAST(std::unique_ptr<IdentifierAST>& name, std::unique_ptr<ArgListAST>& args) : name(std::move(name)), args(std::move(args)) {}
+        CustomFuncAST(std::unique_ptr<IdentifierAST>& name) : name(std::move(name)), args(nullptr) {}
+
+        genValue codegen(genContext context) override;
+    };
+
+    class SysFuncAST : public FuncCallAST {
+    public:
+        SysFunc name;
+        std::unique_ptr<ArgListAST> args;
+
+        SysFuncAST(const SysFunc& name, std::unique_ptr<ArgListAST>& args) : name(name), args(std::move(args)) {}
+        SysFuncAST(const SysFunc& name) : name(name), args(nullptr) {}
+
+        genValue codegen(genContext context) override;
+    };
 }
 
-#endif //YAPC_EXPR_HPP
+#endif
