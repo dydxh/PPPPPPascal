@@ -4,6 +4,15 @@
 #include <utility>
 #include "Driver.hpp"
 
+
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+
+
 int main(const int argc, const char** argv) {
     if(argc < 2) {
         std::cout << "[Usage]: ./[elf] [source]" << std::endl;

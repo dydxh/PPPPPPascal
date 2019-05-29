@@ -28,7 +28,7 @@ namespace yapc {
 
         BinaryExprAST(BinaryOp op, const std::shared_ptr<ExprAST>& lval, const std::shared_ptr<ExprAST>& rval) : op(op), lhs(lval), rhs(rval) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class UnaryExprAST : public ExprAST {

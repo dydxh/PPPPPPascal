@@ -23,6 +23,7 @@ namespace yapc {
 
         TypeAST() {};
         ~TypeAST() {};
+        genValue codegen(genContext context) override {}
     };
 
     class PrimaryTypeAST : public TypeAST {
@@ -93,6 +94,7 @@ namespace yapc {
         Type type = Type::UNKNOWN;
 
         ConstAST() {};
+
     };
 
     class BooleanAST : public ConstAST {

@@ -5,10 +5,11 @@
 #include <memory>
 #include <iostream>
 #include <cassert>
+#include "../codeGen/codeGen_utils.hpp"
 
 namespace yapc {
-    using genValue = void;
-    using genContext = int;
+    using genValue = llvm::Value *;
+    using genContext = CodeGenUtils;
 
     class BasicAST {
     public:
@@ -23,12 +24,14 @@ namespace yapc {
     public:
         ExprAST() {};
         ~ExprAST() {};
+        genValue codegen(genContext context) override {}
     };
 
     class StmtAST : public BasicAST {
     public:
         StmtAST() = default;
         ~StmtAST() = default;
+        genValue codegen(genContext context) override {}
     };
 
     template<typename T>
@@ -58,6 +61,7 @@ namespace yapc {
         }
 
         std::list<std::shared_ptr<T>>& get_children() {return children;}
+        genValue codegen(genContext context) override {}
 
     protected:
         std::list<std::shared_ptr<T>> children;
