@@ -7,14 +7,14 @@
 #include <cassert>
 
 namespace yapc {
-    using genValue = int;
+    using genValue = void;
     using genContext = int;
 
     class BasicAST {
     public:
         ~BasicAST() {};
 
-        //virtual genValue codegen(genContext context) = 0;
+        virtual genValue codegen(genContext context) = 0;
     };
 
     using BasicPtr = std::shared_ptr<BasicAST>;

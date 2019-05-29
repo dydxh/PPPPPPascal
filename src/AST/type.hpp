@@ -106,7 +106,7 @@ namespace yapc {
             this->type = Type::BOOLEAN;
         }
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class IntegerAST : public ConstAST {
@@ -120,7 +120,7 @@ namespace yapc {
             this->type = Type::INTEGER;
         }
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class RealAST : public ConstAST {
@@ -135,7 +135,7 @@ namespace yapc {
         }
         ~RealAST() {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
     
     class StringAST : public ConstAST {
@@ -152,7 +152,7 @@ namespace yapc {
             this->type = Type::STRING;
         }
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 }
 

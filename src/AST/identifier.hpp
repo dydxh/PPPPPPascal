@@ -12,7 +12,7 @@ namespace yapc {
         }
         ~IdentifierAST() = default;
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
 
     protected:
         std::string name;

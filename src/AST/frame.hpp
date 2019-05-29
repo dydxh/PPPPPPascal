@@ -22,7 +22,7 @@ namespace yapc {
 
         ProgHeadAST(const std::shared_ptr<TypeAST> typeval, const std::shared_ptr<IdentifierAST> nameval, const std::shared_ptr<ParamListAST> paramval) : type(typeval), name(nameval), params(paramval) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     using ProgListAST = ListAST<ProgramAST>;
@@ -40,7 +40,7 @@ namespace yapc {
             const std::shared_ptr<CompoundStmtAST>& progbody)
             : constpart(constpart), typepart(typepart), varpart(varpart), progpart(progpart), progbody(progbody) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class ProgramAST : public  BasicAST {
@@ -51,7 +51,7 @@ namespace yapc {
         ProgramAST(const std::shared_ptr<ProgHeadAST>& prog_head, const std::shared_ptr<ProgBlockAST>& prog_block)
             : proghead(prog_head), progblock(prog_block) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 }
 

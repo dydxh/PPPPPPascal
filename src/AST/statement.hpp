@@ -21,7 +21,7 @@ namespace yapc {
             : expr(expr), stmt(stmt), else_stmt(else_stmt) {}
         ~IfStmtAST() = default;
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class WhileStmtAST : public StmtAST {
@@ -31,7 +31,7 @@ namespace yapc {
 
         WhileStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     enum class Direct {
@@ -49,7 +49,7 @@ namespace yapc {
         ForStmtAST(Direct dir, const std::shared_ptr<IdentifierAST>& identifier, const std::shared_ptr<ExprAST>& startval, const std::shared_ptr<ExprAST>& endval, const std::shared_ptr<CompoundStmtAST>& stmt)
             : direct(dir), identifier(identifier), start_val(startval), end_val(endval), stmt(stmt) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class RepeatStmtAST : public StmtAST {
@@ -59,7 +59,7 @@ namespace yapc {
 
         RepeatStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class CallStmtAST : public StmtAST {
@@ -68,7 +68,7 @@ namespace yapc {
 
         CallStmtAST(const std::shared_ptr<FuncCallAST>& func) : func(func) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 
     class AssignStmtAST : public StmtAST {
@@ -78,7 +78,7 @@ namespace yapc {
 
         AssignStmtAST(const std::shared_ptr<ExprAST>& lval, const std::shared_ptr<ExprAST>& rval) : lhs(lval), rhs(rval) {}
 
-        //genValue codegen(genContext context) override;
+        genValue codegen(genContext context) override {}
     };
 }
 
