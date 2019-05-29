@@ -21,8 +21,8 @@ namespace yapc {
     public:
         Type type = Type::UNKNOWN;
 
-        TypeAST() = default;
-        ~TypeAST() = default;
+        TypeAST() {};
+        ~TypeAST() {};
     };
 
     class PrimaryTypeAST : public TypeAST {
@@ -32,9 +32,9 @@ namespace yapc {
         }
     };
 
-    class VoidType : public TypeAST {
+    class VoidTypeAST : public TypeAST {
     public:
-        VoidType() {
+        VoidTypeAST() {
             this->type = Type::VOID;
         }
     };
@@ -51,6 +51,15 @@ namespace yapc {
         RecordTypeAST() {
             this->type = Type::RECORD;
         }
+        void AddField(const std::shared_ptr<VarDeclAST>& single_field) {
+            fields.push_back(single_field);
+        }
+        void MergeField(const std::shared_ptr<RecordTypeAST>& another_record) {
+            for(auto& e : another_record->get_fields()) {
+                fields.push_back(e);
+            }
+        }
+        std::list<std::shared_ptr<VarDeclAST>>& get_fields() {return this->fields;}
 
     protected:
         std::list<std::shared_ptr<VarDeclAST>> fields;
@@ -59,9 +68,9 @@ namespace yapc {
     class ArrayTypeAST : public TypeAST {
     public:
         std::shared_ptr<ExprAST> StartValue, EndValue;
-        Type ItemType;
+        std::shared_ptr<TypeAST> ItemType;
 
-        ArrayTypeAST(std::shared_ptr<ExprAST>&& startvalue, std::shared_ptr<ExprAST>&& endvalue, Type itemtype) {
+        ArrayTypeAST(const std::shared_ptr<ExprAST>& startvalue, const std::shared_ptr<ExprAST>& endvalue, const std::shared_ptr<TypeAST>& itemtype) {
             StartValue = startvalue;
             EndValue = endvalue;
             ItemType = itemtype;
@@ -73,10 +82,10 @@ namespace yapc {
     public:
         std::shared_ptr<IdentifierAST> name;
         
-        DeclTypeAST(std::shared_ptr<IdentifierAST>&& ID) {
+        DeclTypeAST(const std::shared_ptr<IdentifierAST>&& ID) {
             name = ID;
         }
-        ~DeclTypeAST() = default;
+        ~DeclTypeAST() {};
     };
 
     class ConstAST : public ExprAST {

@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <string>
 #include <stdexcept>
+#include <memory>
 #include "Scanner.hpp"
 #include "AST/basicast.hpp"
 
@@ -24,7 +25,6 @@ using token = yapc::Parser::token;
 %option yyclass="yapc::Scanner"
 %option noyywrap
 %option caseless
-%option debug
 %option stack
 
 NQUOTE [^']
@@ -64,15 +64,15 @@ NQUOTE [^']
 "TRUE"      {std::cout << yytext; yylval->build<bool>(true);  return token::TRUE;}
 "FALSE"     {std::cout << yytext; yylval->build<bool>(false); return token::FALSE;}
 "RECORD"    {std::cout << yytext;  return token::RECORD;}
-"WRITE"     {std::cout << yytext;  return token::SYS_FUNC;}
-"WRITELN"   {std::cout << yytext;  return token::SYS_FUNC;}
-"READ"      {std::cout << yytext;  return token::SYS_FUNC;}
-"READLN"    {std::cout << yytext;  return token::SYS_FUNC;}
-"INTEGER"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
-"LONGINT"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
-"BOOLEAN"   {std::cout << yytext;  return token::SIMPLE_TYPE;}
-"REAL"      {std::cout << yytext;  return token::SIMPLE_TYPE;}
-"STRING"    {std::cout << yytext;  return token::STRING;}
+"WRITE"     {std::cout << yytext; yylval->build<SysFunc>(SysFunc::WRITE); return token::SYS_FUNC;}
+"WRITELN"   {std::cout << yytext; yylval->build<SysFunc>(SysFunc::WRITELN); return token::SYS_FUNC;}
+"READ"      {std::cout << yytext; yylval->build<SysFunc>(SysFunc::READ); return token::SYS_FUNC;}
+"READLN"    {std::cout << yytext; yylval->build<SysFunc>(SysFunc::READLN); return token::SYS_FUNC;}
+"INTEGER"   {std::cout << yytext; yylval->build<std::shared_ptr<PrimaryTypeAST>>(MakeAST<PrimaryTypeAST>(Type::INTEGER)); return token::SIMPLE_TYPE;}
+"LONGINT"   {std::cout << yytext; yylval->build<std::shared_ptr<PrimaryTypeAST>>(MakeAST<PrimaryTypeAST>(Type::INTEGER)); return token::SIMPLE_TYPE;}
+"BOOLEAN"   {std::cout << yytext; yylval->build<std::shared_ptr<PrimaryTypeAST>>(MakeAST<PrimaryTypeAST>(Type::BOOLEAN)); return token::SIMPLE_TYPE;}
+"REAL"      {std::cout << yytext; yylval->build<std::shared_ptr<PrimaryTypeAST>>(MakeAST<PrimaryTypeAST>(Type::REAL)); return token::SIMPLE_TYPE;}
+"STRING"    {std::cout << yytext; yylval->build<std::shared_ptr<StringTypeAST>>(MakeAST<StringTypeAST>()); return token::STRING;}
 [+|-][0-9]+      {std::cout << "Sign Integer: " << yytext; yylval->build<int>(std::stoi(yytext)); return token::SIGNEDDIGSEQ;}
 [0-9]+      {yylval->build<int>(std::stoi(yytext)); std::cout << "Integer: " << yytext; return token::DIGSEQ;}
 [+|-][0-9]+"."[0-9]+   {std::cout << "Sign Real Number: " << yytext; yylval->build<double>(std::stod(yytext)); return token::SIGNEDREALNUMBER;}

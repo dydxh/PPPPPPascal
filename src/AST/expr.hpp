@@ -26,10 +26,7 @@ namespace yapc {
         BinaryOp op;
         std::shared_ptr<ExprAST> lhs, rhs;
 
-        BinaryExprAST(BinaryOp op, std::shared_ptr<ExprAST>& lval, std::shared_ptr<ExprAST>& rval) : op(op) {
-            lhs = lval;
-            rhs = rval;
-        }
+        BinaryExprAST(BinaryOp op, const std::shared_ptr<ExprAST>& lval, const std::shared_ptr<ExprAST>& rval) : op(op), lhs(lval), rhs(rval) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -39,7 +36,7 @@ namespace yapc {
         UnaryOp op;
         std::shared_ptr<ExprAST> rhs;
 
-        UnaryExprAST(UnaryOp op, std::shared_ptr<ExprAST>& val) : op(op), rhs(val) {}
+        UnaryExprAST(UnaryOp op, const std::shared_ptr<ExprAST>& val) : op(op), rhs(val) {}
     };
 
     class ArrayAccessAST : public ExprAST {
@@ -47,15 +44,9 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<ExprAST> index;
 
-        ArrayAccessAST(std::string& ID, std::shared_ptr<ExprAST>& idx) {
-            name = MakeAST<IdentifierAST>(ID);
-            index = idx;
-        }
+        ArrayAccessAST(const std::string& ID, const std::shared_ptr<ExprAST>& idx) : name(MakeAST<IdentifierAST>(ID)), index(idx) {}
 
-        ArrayAccessAST(std::shared_ptr<IdentifierAST>& ID, std::shared_ptr<ExprAST>& idx) {
-            name = ID;
-            index = idx;
-        }
+        ArrayAccessAST(const std::shared_ptr<IdentifierAST>& ID, const std::shared_ptr<ExprAST>& idx) : name(ID), index(idx) {}
     };
 
     class RecordAccessAST : public ExprAST {
@@ -63,22 +54,16 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<IdentifierAST> field;
 
-        RecordAccessAST(std::string& ID, std::string& field) {
-            this->name = MakeAST<IdentifierAST>(ID);
-            this->field = MakeAST<IdentifierAST>(field);
-        }
-        RecordAccessAST(std::shared_ptr<IdentifierAST>& ID, std::shared_ptr<IdentifierAST>& field) {
-            name = ID;
-            field = field;
-        }
+        RecordAccessAST(const std::string& ID, const std::string& field) : name(MakeAST<IdentifierAST>(ID)), field(MakeAST<IdentifierAST>(field)) {}
+        RecordAccessAST(const std::shared_ptr<IdentifierAST>& ID, const std::shared_ptr<IdentifierAST>& field) : name(ID), field(field) {}
     };
 
     class FuncCallAST : public ExprAST {
     public:
         std::shared_ptr<FuncCallAST> funccall;
 
-        FuncCallAST() = default;
-        FuncCallAST(std::shared_ptr<FuncCallAST>& call_stmt) : funccall(call_stmt) {}
+        FuncCallAST() {}
+        FuncCallAST(const std::shared_ptr<FuncCallAST>& call_stmt) : funccall(call_stmt) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -88,14 +73,11 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<ArgListAST> args;
 
-        CustomFuncAST(std::string& name, std::shared_ptr<ArgListAST>& args) {
-            this->name = MakeAST<IdentifierAST>(name);
-            this->args = args;
-        }
-        CustomFuncAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<ArgListAST>& args) : name(name), args(args) {}
+        CustomFuncAST(const std::string& name, const std::shared_ptr<ArgListAST>& args) : name(MakeAST<IdentifierAST>(name)), args(args) {}
+        CustomFuncAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<ArgListAST>& args) : name(name), args(args) {}
 
-        CustomFuncAST(std::string& name) : name(MakeAST<IdentifierAST>(name)), args(nullptr) {}
-        CustomFuncAST(std::shared_ptr<IdentifierAST>& name) : name(name), args(nullptr) {}
+        CustomFuncAST(const std::string& name) : name(MakeAST<IdentifierAST>(name)), args(nullptr) {}
+        CustomFuncAST(const std::shared_ptr<IdentifierAST>& name) : name(name), args(nullptr) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -105,7 +87,7 @@ namespace yapc {
         SysFunc name;
         std::shared_ptr<ArgListAST> args;
 
-        SysFuncAST(const SysFunc& name, std::shared_ptr<ArgListAST>& args) : name(name), args(args) {}
+        SysFuncAST(const SysFunc& name, const std::shared_ptr<ArgListAST>& args) : name(name), args(args) {}
         SysFuncAST(const SysFunc& name) : name(name), args(nullptr) {}
 
         //genValue codegen(genContext context) override;

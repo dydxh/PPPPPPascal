@@ -10,13 +10,12 @@ namespace yapc {
 class Driver {
 public:
     Context& context;
-    explicit Driver(Context& context);
+    Scanner* scanner;
+    Parser* parser;
+    explicit Driver(Context& contextval);
     ~Driver();
     bool Parse(const std::string& filename);
 
-private:
-    Scanner* scanner;
-    Parser* parser;
 };
 
 }

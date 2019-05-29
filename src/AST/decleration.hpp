@@ -15,7 +15,7 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<TypeAST> type;
 
-        VarDeclAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
+        VarDeclAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -25,7 +25,7 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<ConstAST> value;
 
-        ConstDeclAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<ConstAST>& value) : name(name), value(value) {}
+        ConstDeclAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<ConstAST>& value) : name(name), value(value) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -35,7 +35,7 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<TypeAST> type;
 
-        TypeDeclAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
+        TypeDeclAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -50,7 +50,7 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<TypeAST> type;
 
-        ParamAST(std::shared_ptr<IdentifierAST>& name, std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
+        ParamAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
         //genValue codegen(genContext context) override;
     };

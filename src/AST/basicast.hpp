@@ -35,7 +35,7 @@ namespace yapc {
     class ListAST : public BasicAST {
     public:
         ListAST() {}
-        ListAST(std::shared_ptr<T>& value) {
+        ListAST(const std::shared_ptr<T>& value) {
             children.push_back(value);
         }
         ListAST(const std::shared_ptr<T>&& value) {
@@ -43,15 +43,15 @@ namespace yapc {
         }
         ~ListAST() = default;
 
-        void AppendChild(std::list<std::shared_ptr<T>>& orphan) {
+        void AppendChild(const std::shared_ptr<T>& orphan) {
             children.push_back(orphan);
         }
 
-        void AppendChild(const std::list<std::shared_ptr<T>>&& orphan) {
+        void AppendChild(const std::shared_ptr<T>&& orphan) {
             children.push_back(orphan);
         }
 
-        void MergeAST(std::list<std::shared_ptr<T>>& orphans) {
+        void MergeAST(const std::list<std::shared_ptr<T>>& orphans) {
             for(auto& e : orphans) {
                 AppendChild(e);
             }

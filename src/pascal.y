@@ -3,26 +3,37 @@
 %debug
 %defines
 %define api.namespace {yapc}
-%define api.parser.class {Parser}
+%define parser_class_name {Parser}
 %define api.value.type variant
 %locations
 
 %code requires {
     #include "AST/expr.hpp"
+    #include "AST/frame.hpp"
+    #include "AST/basicast.hpp"
+    #include "AST/decleration.hpp"
+    #include "AST/identifier.hpp"
+    #include "AST/statement.hpp"
+    #include "AST/type.hpp"
     #include <iostream>
     #include <memory>
     #include <string>
     #include <stdexcept>
+    namespace yapc {
+        class Scanner;
+        class Driver;
+    }
     using namespace yapc;
 }
 
-%parse-param {Scanner& scanner} {Driver& driver}
+%parse-param {Scanner& scanner}
+%parse-param {Driver& driver}
 
 %code {
     #include "Driver.hpp"
+    #include "Scanner.hpp"
     #undef yylex
     #define yylex scanner.yylex
-    using namespace yapc;
 }
 
 %define parse.error verbose
@@ -39,10 +50,38 @@
 %type <int> SIGNEDDIGSEQ DIGSEQ
 %type <double> SIGNEDREALNUMBER REALNUMBER
 %type <bool> TRUE FALSE
-%type <std::string> LITERAL
-%type <std::unique_ptr<ConstAST>> const_value signed_number
-%type <std::unique_ptr<IntegerAST>> signed_integer
-%type <std::unique_ptr<RealAST>> signed_real
+%type <std::string> LITERAL IDENTIFIER
+%type <yapc::Direct> direction
+%type <std::shared_ptr<ConstAST>> const_value signed_number
+%type <std::shared_ptr<IntegerAST>> signed_integer
+%type <std::shared_ptr<RealAST>> signed_real
+%type <yapc::SysFunc> SYS_FUNC
+
+%type <std::shared_ptr<ArgListAST>> arg_list params
+%type <std::shared_ptr<ExprAST>> primary factor term expr expression
+%type <std::shared_ptr<ProgListAST>> subproc_decl_list subproc_decl_part
+%type <std::shared_ptr<ProgramAST>> func_decl procdure_decl subproc_decl program
+%type <std::shared_ptr<ProgHeadAST>> function_header procedure_header program_header
+%type <std::shared_ptr<ProgBlockAST>> proc_block
+%type <std::shared_ptr<ConstDeclListAST>> const_decl_list const_decl_part
+%type <std::shared_ptr<ConstDeclAST>> const_decl
+%type <std::shared_ptr<TypeDeclListAST>> type_decl_list type_decl_part
+%type <std::shared_ptr<TypeDeclAST>> type_decl
+%type <std::shared_ptr<TypeAST>> type_denoter
+%type <std::shared_ptr<PrimaryTypeAST>> SIMPLE_TYPE
+%type <std::shared_ptr<StringTypeAST>> STRING
+%type <std::shared_ptr<ArrayTypeAST>> array_type
+%type <std::shared_ptr<RecordTypeAST>> field_decl field_decl_list record_type
+%type <std::shared_ptr<IdentifierListAST>> name_list
+%type <std::shared_ptr<VarDeclListAST>> var_decl var_decl_list var_decl_part
+%type <std::shared_ptr<ParamListAST>> param_decl param_decl_list formal_param_part
+%type <std::shared_ptr<CompoundStmtAST>> stmt stmt_list compound_part
+%type <std::shared_ptr<CallStmtAST>> call_stmt
+%type <std::shared_ptr<IfStmtAST>> if_stmt
+%type <std::shared_ptr<ForStmtAST>> for_stmt
+%type <std::shared_ptr<WhileStmtAST>> while_stmt
+%type <std::shared_ptr<RepeatStmtAST>> repeat_stmt
+%type <std::shared_ptr<AssignStmtAST>> assignment_stmt
 %type <UnaryOp> sign
 %type <BinaryOp> relop addop mulop
 
@@ -52,42 +91,58 @@
 %start program
 
 %%
-program: program_header SEMICOLON proc_block DOT TERMINATE
+program: program_header SEMICOLON proc_block DOT TERMINATE {
+        $$ = MakeAST<ProgramAST>($1, $3);
+    }
     ;
 
-program_header: PROGRAM IDENTIFIER
+program_header: PROGRAM IDENTIFIER {$$ = MakeAST<ProgHeadAST>(MakeAST<VoidTypeAST>(), MakeAST<IdentifierAST>($2), MakeAST<ParamListAST>());}
     ;
 
-proc_block: const_decl_part type_decl_part var_decl_part subproc_decl_part compound_part
+proc_block: const_decl_part type_decl_part var_decl_part subproc_decl_part compound_part {
+        $$ = MakeAST<ProgBlockAST>($1, $2, $3, $4, $5);
+    }
     ;
 
-const_decl_part: CONST const_decl_list
-    |
+const_decl_part: CONST const_decl_list {$$ = $2;}
+    | {$$ = MakeAST<ConstDeclListAST>();}
     ;
 
-const_decl_list: const_decl_list const_decl
-    | const_decl
+const_decl_list: const_decl_list const_decl {
+        $$ = $1;
+        $$->AppendChild($2);
+    }
+    | const_decl {$$ = MakeAST<ConstDeclListAST>($1);}
     ;
 
-const_decl: IDENTIFIER EQUAL const_value SEMICOLON
+const_decl: IDENTIFIER EQUAL const_value SEMICOLON {
+        $$ = MakeAST<ConstDeclAST>(MakeAST<IdentifierAST>($1), $3);
+    }
     ;
 
-type_decl_part: TYPE type_decl_list
-    |
+type_decl_part: TYPE type_decl_list {$$ = $2;}
+    | {$$ = MakeAST<TypeDeclListAST>();}
     ;
 
-type_decl_list: type_decl_list type_decl
-    | type_decl
+type_decl_list: type_decl_list type_decl {
+        $$ = $1;
+        $$->AppendChild($2);
+    }
+    | type_decl {$$ = MakeAST<TypeDeclListAST>($1);}
     ;
 
-type_decl: IDENTIFIER EQUAL type_denoter SEMICOLON
+type_decl: IDENTIFIER EQUAL type_denoter SEMICOLON {
+        $$ = MakeAST<TypeDeclAST>(MakeAST<IdentifierAST>($1), $3);
+    }
     ;
 
-type_denoter: IDENTIFIER
-    | SIMPLE_TYPE
-    | STRING
-    | array_type
-    | record_type
+type_denoter: IDENTIFIER {
+        $$ = MakeAST<DeclTypeAST>(MakeAST<IdentifierAST>($1));
+    }
+    | SIMPLE_TYPE {$$ = $1;}
+    | STRING {$$ = $1;}
+    | array_type {$$ = $1;}
+    | record_type {$$ = $1;}
     ;
 
 array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF SIMPLE_TYPE {
@@ -98,20 +153,20 @@ array_type: ARRAY LBRAC signed_integer DOTDOT signed_integer RBRAC OF SIMPLE_TYP
     }
     ;
 
-record_type: RECORD field_decl_list END
+record_type: RECORD field_decl_list END {$$ = $2;}
     ;
 
 field_decl_list: field_decl_list field_decl {
         $$ = $1;
-        $$->MergeAST($2);
+        $$->MergeField($2);
     }
     | field_decl {$$ = $1;}
     ;
 
 field_decl: name_list COLON SIMPLE_TYPE SEMICOLON {
-        $$ = MakeAST<TypeDeclListAST>();
-        for(auto name : name_list)
-            $$->AppendChild(MakeAST<TypeDeclAST>(name, $3));
+        $$ = MakeAST<RecordTypeAST>();
+        for(auto name : $1->get_children())
+            $$->AddField(MakeAST<VarDeclAST>(name, $3));
     }
     ;
 
@@ -122,7 +177,7 @@ name_list: name_list COMMA IDENTIFIER {
     | IDENTIFIER {$$ = MakeAST<IdentifierListAST>(MakeAST<IdentifierAST>($1));}
     ;
 
-var_decl_part: VAR var_decl_list {$$ = $1;}
+var_decl_part: VAR var_decl_list {$$ = $2;}
     | {$$ = MakeAST<VarDeclListAST>();}
     ;
 
@@ -141,7 +196,7 @@ var_decl: name_list COLON type_denoter SEMICOLON {
     ;
 
 subproc_decl_part: subproc_decl_list {$$ = $1;}
-    | {$$ = MakeAST<ProgramListAST>();}
+    | {$$ = MakeAST<ProgListAST>();}
     ;
 
 subproc_decl_list: subproc_decl_list subproc_decl {
@@ -149,7 +204,7 @@ subproc_decl_list: subproc_decl_list subproc_decl {
         $$->AppendChild($2);
     }
     | subproc_decl {
-        $$ = MakeAST<ProgramListAST>($1);
+        $$ = MakeAST<ProgListAST>($1);
     }
     ;
 
@@ -163,14 +218,14 @@ procdure_decl: procedure_header SEMICOLON proc_block SEMICOLON {
     ;
 
 procedure_header: PROCEDURE IDENTIFIER {
-        $$ = MakeAST<ProgHeadAST>(Type::VOID, MakeAST<IdentifierAST>($2), MakeAST<ParamListAST>());
+        $$ = MakeAST<ProgHeadAST>(MakeAST<VoidTypeAST>(), MakeAST<IdentifierAST>($2), MakeAST<ParamListAST>());
     }
     | PROCEDURE IDENTIFIER formal_param_part {
-        $$ = MakeAST<ProgHeadAST>(Type::VOID, MakeAST<IdentifierAST>($2), $3);
+        $$ = MakeAST<ProgHeadAST>(MakeAST<VoidTypeAST>(), MakeAST<IdentifierAST>($2), $3);
     }
     ;
 
-formal_param_part: LPAREN param_decl_list RPAREN {$$ = $1;}
+formal_param_part: LPAREN param_decl_list RPAREN {$$ = $2;}
     ;
 
 param_decl_list: param_decl_list SEMICOLON param_decl {
@@ -221,7 +276,7 @@ stmt: assignment_stmt {$$ = MakeAST<CompoundStmtAST>($1);}
 
 
 assignment_stmt: IDENTIFIER ASSIGNMENT expression {
-        $$ = MakeAST<AssignStmtAST>(MakeAST<IdentifierAST>($1), $2);
+        $$ = MakeAST<AssignStmtAST>(MakeAST<IdentifierAST>($1), $3);
     }
     | IDENTIFIER LBRAC expression RBRAC ASSIGNMENT expression {
         $$ = MakeAST<AssignStmtAST>(MakeAST<ArrayAccessAST>($1, $3), $6);
@@ -242,7 +297,7 @@ while_stmt: WHILE expression DO stmt {
     ;
 
 for_stmt: FOR IDENTIFIER ASSIGNMENT expression direction expression DO stmt {
-        $$ = MakeAST<ForStmtAST>($5, MakeAST<IdentifierAST>($2), $4, $5, $8);
+        $$ = MakeAST<ForStmtAST>($5, MakeAST<IdentifierAST>($2), $4, $6, $8);
     }
     ;
 
@@ -269,10 +324,6 @@ call_stmt: IDENTIFIER params {
 params: LPAREN arg_list RPAREN {$$ = $2;}
     | LPAREN RPAREN {$$ = MakeAST<ArgListAST>();}
     | {$$ = MakeAST<ArgListAST>();}
-    ;
-
-parameter_list: parameter_list COMMA expression
-    | expression
     ;
 
 expression: expr {$$ = $1;}

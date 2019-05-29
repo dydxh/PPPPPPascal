@@ -15,9 +15,9 @@ namespace yapc {
         std::shared_ptr<CompoundStmtAST> stmt;
         std::shared_ptr<CompoundStmtAST> else_stmt;
 
-        IfStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST> stmt)
+        IfStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST> stmt)
             : expr(expr), stmt(stmt), else_stmt(nullptr) {}
-        IfStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST> stmt, std::shared_ptr<CompoundStmtAST> else_stmt)
+        IfStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST> stmt, const std::shared_ptr<CompoundStmtAST> else_stmt)
             : expr(expr), stmt(stmt), else_stmt(else_stmt) {}
         ~IfStmtAST() = default;
 
@@ -29,7 +29,7 @@ namespace yapc {
         std::shared_ptr<ExprAST> expr;
         std::shared_ptr<CompoundStmtAST> stmt;
 
-        WhileStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
+        WhileStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -46,7 +46,7 @@ namespace yapc {
         std::shared_ptr<ExprAST> end_val;
         std::shared_ptr<CompoundStmtAST> stmt;
 
-        ForStmtAST(Direct dir, std::shared_ptr<IdentifierAST>& identifier, std::shared_ptr<ExprAST>& startval, std::shared_ptr<ExprAST>& endval, std::shared_ptr<CompoundStmtAST>& stmt)
+        ForStmtAST(Direct dir, const std::shared_ptr<IdentifierAST>& identifier, const std::shared_ptr<ExprAST>& startval, const std::shared_ptr<ExprAST>& endval, const std::shared_ptr<CompoundStmtAST>& stmt)
             : direct(dir), identifier(identifier), start_val(startval), end_val(endval), stmt(stmt) {}
 
         //genValue codegen(genContext context) override;
@@ -57,7 +57,7 @@ namespace yapc {
         std::shared_ptr<ExprAST> expr;
         std::shared_ptr<CompoundStmtAST> stmt;
 
-        RepeatStmtAST(std::shared_ptr<ExprAST>& expr, std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
+        RepeatStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -66,7 +66,7 @@ namespace yapc {
     public:
         std::shared_ptr<FuncCallAST> func;
 
-        CallStmtAST(std::shared_ptr<FuncCallAST> func) : func(func) {}
+        CallStmtAST(const std::shared_ptr<FuncCallAST>& func) : func(func) {}
 
         //genValue codegen(genContext context) override;
     };
@@ -76,7 +76,7 @@ namespace yapc {
         std::shared_ptr<ExprAST> lhs;
         std::shared_ptr<ExprAST> rhs;
 
-        AssignStmtAST(std::shared_ptr<ExprAST>& lval, std::shared_ptr<ExprAST>& rval) : lhs(lval), rhs(rval) {}
+        AssignStmtAST(const std::shared_ptr<ExprAST>& lval, const std::shared_ptr<ExprAST>& rval) : lhs(lval), rhs(rval) {}
 
         //genValue codegen(genContext context) override;
     };
