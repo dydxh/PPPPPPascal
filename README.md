@@ -2,12 +2,23 @@
 
 Compile Principle Course Project
 
-Pascal Compiler Frontend
+Yet Another Pascal Compiler (yapc)
 
-## Keyword
+## Intro
 
-=, <, >, <=, >=, <>, +, -, *, /, :, ,, :=, ;, [, ], (, ), {, }, //, {}, ., ..
+A lite pascal compiler developed on
 
-and, or, xor, not, div, mod, true, false, do, downto, to, until, record, type, array, exit, begin, end, program, function, procedure, if, else, for, while, repeat, const, of, write, read, writeln, readln, boolean, char, integer, real, longint
+```
+bison 3.3.2
+flex 2.6.4
+llvm 9.0.0
+```
 
+## Build
 
+```bash
+mkdir build
+cd build
+cmake ..
+./yapc ../test/fib.pas
+```
