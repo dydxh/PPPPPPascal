@@ -19,6 +19,8 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+
+
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Module.h>
@@ -37,7 +39,7 @@ namespace yapc {
 
     class CodeGenUtils {
     public:
-        CodeGenUtils(std::string module_id) : Builder(llvm::IRBuilder<>(llvm_context)), TheModule(llvm::make_unique<llvm::Module>(TheModule, llvm_context)) {}
+        CodeGenUtils(std::string module_id) : Builder(llvm::IRBuilder<>(llvm_context)), TheModule(llvm::make_unique<llvm::Module>(module_id, llvm_context)) {}
         llvm::Value *GetValue(std::string key) {
             auto V = NamedValues[key];
             if (!V)
@@ -66,15 +68,16 @@ namespace yapc {
             return true;
         }
 
+
     private:
         llvm::IRBuilder<> Builder;
         std::unique_ptr<llvm::Module> TheModule;
         std::map<std::string, llvm::Value *> NamedValues;
         std::map<std::string, llvm::Type *> Aliases;
+
     };
 
 }
-
 
 
 #endif //YAPC_CODEGEN_UTILS_HPP

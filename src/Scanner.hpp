@@ -8,6 +8,7 @@
 #include "Parser.hpp"
 #include "location.hh"
 
+
 namespace yapc {
 
 class Scanner: public yyFlexLexer {

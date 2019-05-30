@@ -10,6 +10,8 @@
 namespace yapc {
     using genValue = llvm::Value *;
     using genContext = CodeGenUtils;
+    //using genValue = int;
+    //using genContext = int;
 
     class BasicAST {
     public:
