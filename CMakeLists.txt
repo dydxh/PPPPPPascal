@@ -10,7 +10,7 @@ if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp" AND
         EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp")
         message(STATUS "Found Scanner and Parser exists")
         set(FLEX_yapc_lexer_OUTPUTS "${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp")
-        set(BISON_yapc_parser_OUTPUTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp;${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp")
+        set(BISON_yapc_parser_OUTPUTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp;${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp" src/codeGen/basiccast.cpp)
 else()
 	find_package(BISON REQUIRED)
 	find_package(FLEX REQUIRED)

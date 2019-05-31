@@ -7,6 +7,7 @@
 namespace yapc {
 
     genValue ConstDeclAST::codegen(CodeGenUtils &context) {
+        printf("fff");
         if (context.is_subroutine) {
             // TODO: String check
             auto *local = context.GetBuilder().CreateAlloca(value->GetType(context));

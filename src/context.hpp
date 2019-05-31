@@ -6,7 +6,7 @@
 #define yapc_context_header
 
 #include <memory>
-
+#include "AST/frame.hpp"
 #include "AST/basicast.hpp"
 
 namespace yapc {

@@ -63,7 +63,11 @@ namespace yapc {
         }
 
         std::list<std::shared_ptr<T>>& get_children() {return children;}
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override {
+            for (auto &p : children) {
+                p->codegen(context);
+            }
+        }
 
     protected:
         std::list<std::shared_ptr<T>> children;

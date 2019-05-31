@@ -51,7 +51,7 @@ namespace yapc {
         ProgramAST(const std::shared_ptr<ProgHeadAST>& prog_head, const std::shared_ptr<ProgBlockAST>& prog_block)
             : proghead(prog_head), progblock(prog_block) {}
 
-        genValue codegen(genContext context) override {printf("aaa");}
+        genValue codegen(genContext context) override;
     };
 }
 
