@@ -17,7 +17,7 @@ namespace yapc {
 
         VarDeclAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class ConstDeclAST : public DeclAST {
