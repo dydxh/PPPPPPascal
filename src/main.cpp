@@ -27,12 +27,10 @@
 
 int main(const int argc, const char** argv) {
 
-    /*
     if(argc < 2) {
         std::cout << "[Usage]: ./[elf] [source]" << std::endl;
         return 0;
     }
-     */
 
 
     yapc::Driver* driver;
@@ -44,8 +42,7 @@ int main(const int argc, const char** argv) {
         std::cerr << "Failed to allocate driver: (" << msg.what() << "), exit." << std::endl;
         return false;
     }
-    //driver->Parse(argv[1]);
-    driver->Parse("/Users/zuhxs/Documents/GitHub/PPPPPPascal/test/expr.pas");
+    driver->Parse(argv[1]);
     printf("bbb");
     CodeGenUtils genContext("main");
     printf("ccc");
