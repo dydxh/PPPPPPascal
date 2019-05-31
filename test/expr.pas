@@ -1,5 +1,6 @@
 program exprcheck;
 CONST
+    y = 33;
     a = 1;
     b = 2.2;
     c = 'string';
@@ -26,8 +27,8 @@ begin
 end;
 
 begin
-    e := a + b;
-    g := a - b;
+    e := a + y;
+    g := a - y;
     f := a * b;
     f := a / b;
     i := a = b;
@@ -38,9 +39,9 @@ begin
     f := 2.2;
     g := 3;
     i := false;
-    e := a and b;
-    e := a or b;
-    e := a xor b;
+    e := a and y;
+    e := a or y;
+    e := a xor y;
     e := a div g;
     e := a mod g;
     e := not g;
@@ -50,6 +51,6 @@ begin
     j[1] := 1;
     j[2] := 2;
 
-    k.z := (j[-2] + a - g) * 4 / 3 ** 3 + test();
+    k.a := (j[-2] + a - g) * 4 div 3 * 3 + test();
 
 end.

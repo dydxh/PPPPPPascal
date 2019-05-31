@@ -21,7 +21,7 @@ end;
 
 function fib(n : longint): longint;
 var
-    e, f, g, h : array [-5..10] of real;
+    e, f, g, h : array [-5..10] of integer;
 begin
     if n >= 0 then
     begin
@@ -37,8 +37,6 @@ begin
 end;
 begin
     for a := 1 to 10 do begin
-        e := 2;
-        write(e);
         write('fib ');
         write(a);
         write(' : ');
