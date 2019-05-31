@@ -25,7 +25,6 @@ else()
 	ADD_FLEX_BISON_DEPENDENCY(yapc_lexer yapc_parser)
 endif()
 
-#set(LLVM_DIR "E:/Program Files (x86)/LLVM/lib/cmake/llvm")
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
