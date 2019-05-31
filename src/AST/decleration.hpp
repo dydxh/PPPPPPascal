@@ -37,7 +37,7 @@ namespace yapc {
 
         TypeDeclAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<TypeAST>& type) : name(name), type(type) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     using TypeDeclListAST = ListAST<TypeDeclAST>;

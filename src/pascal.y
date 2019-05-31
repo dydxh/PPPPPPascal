@@ -92,7 +92,7 @@
 
 %%
 program: program_header SEMICOLON proc_block DOT TERMINATE {
-        $$ = MakeAST<ProgramAST>($1, $3);
+        driver.context.program = MakeAST<ProgramAST>($1, $3);
     }
     ;
 

@@ -39,7 +39,9 @@ namespace yapc {
 
     class CodeGenUtils {
     public:
-        CodeGenUtils(std::string module_id) : Builder(llvm::IRBuilder<>(llvm_context)), TheModule(llvm::make_unique<llvm::Module>(module_id, llvm_context)) {}
+        CodeGenUtils(std::string module_id) : Builder(llvm::IRBuilder<>(llvm_context)) {
+            TheModule = std::make_unique<llvm::Module>(module_id, llvm_context);
+        }
         llvm::Value *GetValue(std::string key) {
             auto V = NamedValues[key];
             if (!V)

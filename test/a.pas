@@ -1,1 +1,4 @@
-test = 1.2+1.2;
+program a;
+CONST
+    a = 1;
+end.

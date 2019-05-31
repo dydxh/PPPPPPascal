@@ -12,7 +12,7 @@
 namespace yapc {
     class Context {
     public:
-        std::unique_ptr<BasicAST> program;
+        std::shared_ptr<ProgramAST> program;
     };
 }
 

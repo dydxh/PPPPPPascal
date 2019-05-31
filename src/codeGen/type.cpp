@@ -24,4 +24,22 @@ namespace yapc {
         return context.GetBuilder().CreateGlobalStringPtr(val);
     }
 
+    llvm::Type *TypeAST::GetType(CodeGenUtils &context) {
+        if (auto *PrimaryType = dynamic_cast<const PrimaryTypeAST*>(this)){
+            switch (type) {
+                case Type::BOOLEAN: return context.GetBuilder().getInt1Ty();
+                case Type::INTEGER: return context.GetBuilder().getInt32Ty();
+                case Type::LONGINT: return context.GetBuilder().getInt32Ty();
+                case Type::REAL: return context.GetBuilder().getDoubleTy();
+                default: return nullptr;
+            }
+        }
+        else if (auto *DecType = dynamic_cast<const DeclTypeAST*>(this)) {
+            return context.GetAlias(DecType->name->GetName());
+        }
+        else {
+            throw CodegenException("Unsupported type");
+        }
+    }
+
 }

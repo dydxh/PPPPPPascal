@@ -40,10 +40,16 @@ namespace yapc {
                 case Type::INTEGER: constant = llvm::ConstantInt::get(type, 0);
                 case Type::REAL: constant = llvm::ConstantFP::get(type, 0.0);
                 case Type::BOOLEAN: constant = llvm::ConstantInt::get(type, 0);
-                default: throw CodegenException("unsupported type");
+                default: throw CodegenException("unsupported type");  // TODO String support
             }
-
-
         };
+    }
+
+    genValue TypeDeclAST::codegen(CodeGenUtils &context) {
+        auto success = context.SetAlias(name->GetName(), type->GetType(context));
+        if (!success) {
+            throw CodegenException("duplicate type alias");
+        }
+        return nullptr;
     }
 }

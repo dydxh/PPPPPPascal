@@ -24,17 +24,7 @@ namespace yapc {
         TypeAST() {};
         ~TypeAST() {};
         genValue codegen(genContext context) override {}
-        llvm::Type *GetType(CodeGenUtils &context) {
-            switch (type) {
-                case Type::BOOLEAN: return context.GetBuilder().getInt1Ty();
-                case Type::INTEGER: return context.GetBuilder().getInt32Ty();
-                case Type::LONGINT: return context.GetBuilder().getInt32Ty();
-                case Type::REAL: return context.GetBuilder().getDoubleTy();
-                case Type::STRING: throw CodegenException("string currently not supported.\n");
-                default: return nullptr;
-            }
-        }
-
+        llvm::Type *GetType(CodeGenUtils &context);
     };
 
     class PrimaryTypeAST : public TypeAST {
