@@ -13,6 +13,7 @@ namespace yapc {
         ~IdentifierAST() = default;
 
         genValue codegen(genContext context) override {}
+        std::string &GetName() {return name}
 
     protected:
         std::string name;

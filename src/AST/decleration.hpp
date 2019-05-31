@@ -23,11 +23,11 @@ namespace yapc {
     class ConstDeclAST : public DeclAST {
     public:
         std::shared_ptr<IdentifierAST> name;
-        std::shared_ptr<ConstAST> value;
+        std::shared_ptr<ConstAST> value;  // value and type
 
         ConstDeclAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<ConstAST>& value) : name(name), value(value) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class TypeDeclAST : public DeclAST {

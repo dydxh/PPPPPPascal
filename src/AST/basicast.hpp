@@ -9,7 +9,7 @@
 
 namespace yapc {
     using genValue = llvm::Value *;
-    using genContext = CodeGenUtils;
+    using genContext = CodeGenUtils &;
     //using genValue = int;
     //using genContext = int;
 
@@ -26,14 +26,14 @@ namespace yapc {
     public:
         ExprAST() {};
         ~ExprAST() {};
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) = 0;
     };
 
     class StmtAST : public BasicAST {
     public:
         StmtAST() = default;
         ~StmtAST() = default;
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) = 0;
     };
 
     template<typename T>
