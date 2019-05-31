@@ -1,30 +1,32 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-deprecated-register")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")# -Wno-deprecated-register")
 
 project(yapc)
 
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 14)
 
-INCLUDE_DIRECTORIES(/usr/local/include)
-LINK_DIRECTORIES(/usr/local/lib)
-# LINK_DIRECTORIES(/usr/local/bin)
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp" AND
+        EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp")
+        message(STATUS "Found Scanner and Parser exists")
+else()
+	find_package(BISON REQUIRED)
+	find_package(FLEX REQUIRED)
 
+	BISON_TARGET(yapc_parser
+			${CMAKE_SOURCE_DIR}/src/pascal.y
+			${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp
+			COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp --verbose")
+	FLEX_TARGET(yapc_lexer
+			${CMAKE_SOURCE_DIR}/src/pascal.l
+			${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp)
+	ADD_FLEX_BISON_DEPENDENCY(yapc_lexer yapc_parser)
+endif()
+
+#set(LLVM_DIR "E:/Program Files (x86)/LLVM/lib/cmake/llvm")
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
-
-find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
-
-BISON_TARGET(yapc_parser
-        ${CMAKE_SOURCE_DIR}/src/pascal.y
-        ${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp
-        COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp --verbose")
-FLEX_TARGET(yapc_lexer
-        ${CMAKE_SOURCE_DIR}/src/pascal.l
-        ${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp)
-ADD_FLEX_BISON_DEPENDENCY(yapc_lexer yapc_parser)
 
 include_directories(${CMAKE_SOURCE_DIR}/src/ ${CMAKE_BINARY_DIR} ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
