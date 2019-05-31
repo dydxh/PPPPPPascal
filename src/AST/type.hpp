@@ -24,6 +24,17 @@ namespace yapc {
         TypeAST() {};
         ~TypeAST() {};
         genValue codegen(genContext context) override {}
+        llvm::Type *GetType(CodeGenUtils &context) {
+            switch (type) {
+                case Type::BOOLEAN: return context.GetBuilder().getInt1Ty();
+                case Type::INTEGER: return context.GetBuilder().getInt32Ty();
+                case Type::LONGINT: return context.GetBuilder().getInt32Ty();
+                case Type::REAL: return context.GetBuilder().getDoubleTy();
+                case Type::STRING: throw CodegenException("string currently not supported.\n");
+                default: return nullptr;
+            }
+        }
+
     };
 
     class PrimaryTypeAST : public TypeAST {
@@ -94,6 +105,16 @@ namespace yapc {
         Type type = Type::UNKNOWN;
 
         ConstAST() {};
+        llvm::Type *GetType(CodeGenUtils &context) {
+            switch (type) {
+                case Type::BOOLEAN: return context.GetBuilder().getInt1Ty();
+                case Type::INTEGER: return context.GetBuilder().getInt32Ty();
+                case Type::LONGINT: return context.GetBuilder().getInt32Ty();
+                case Type::REAL: return context.GetBuilder().getDoubleTy();
+                case Type::STRING: throw CodegenException("string currently not supported.\n");
+                default: return nullptr;
+            }
+        }
 
     };
 
@@ -108,7 +129,7 @@ namespace yapc {
             this->type = Type::BOOLEAN;
         }
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class IntegerAST : public ConstAST {
@@ -122,7 +143,7 @@ namespace yapc {
             this->type = Type::INTEGER;
         }
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class RealAST : public ConstAST {
@@ -137,7 +158,7 @@ namespace yapc {
         }
         ~RealAST() {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
     
     class StringAST : public ConstAST {
@@ -154,7 +175,7 @@ namespace yapc {
             this->type = Type::STRING;
         }
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 }
 

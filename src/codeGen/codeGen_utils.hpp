@@ -67,6 +67,13 @@ namespace yapc {
             Aliases[key] = value;
             return true;
         }
+        llvm::IRBuilder<> &GetBuilder() {
+            return Builder;
+        }
+        bool is_subroutine = false;
+        std::unique_ptr<llvm::Module> &GetModule() {
+            return TheModule;
+        }
 
 
     private:
@@ -75,6 +82,16 @@ namespace yapc {
         std::map<std::string, llvm::Value *> NamedValues;
         std::map<std::string, llvm::Type *> Aliases;
 
+    };
+
+    class CodegenException : public std::exception {
+    public:
+        explicit CodegenException(const std::string &description) : description(description) {};
+        const char *what() const noexcept {
+            return ("Codegen error: " + description).c_str();
+        }
+    private:
+        std::string description;
     };
 
 }
