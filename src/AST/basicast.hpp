@@ -5,7 +5,7 @@
 #include <memory>
 #include <iostream>
 #include <cassert>
-#include "../codeGen/codeGen_utils.hpp"
+#include "codeGen/codeGen_utils.hpp"
 
 namespace yapc {
     using genValue = llvm::Value *;
