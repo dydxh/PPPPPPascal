@@ -6,8 +6,11 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 14)
 
 if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp" AND
-        EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp")
+        EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp" AND
+        EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp")
         message(STATUS "Found Scanner and Parser exists")
+        set(FLEX_yapc_lexer_OUTPUTS "${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp")
+        set(BISON_yapc_parser_OUTPUTS "${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp;${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp")
 else()
 	find_package(BISON REQUIRED)
 	find_package(FLEX REQUIRED)
