@@ -1,4 +1,5 @@
 program a;
 CONST
-    a = 1;
+    b = 1;
+begin
 end.
