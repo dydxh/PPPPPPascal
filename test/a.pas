@@ -1,4 +1,4 @@
-program a;
+program aProgram;
 CONST
     b = 1;
 begin

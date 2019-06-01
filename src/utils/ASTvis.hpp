@@ -12,6 +12,16 @@ namespace yapc {
         void travAST(Context& context);
 
     private:
+        void travProgram(const std::shared_ptr<ProgramAST>& program, std::fstream& s );
+        void travProcedure();
+        void travFunc();
+
+        void travCONST();
+        void travTYPE();
+        void travVAR();
+        void travSubproc();
+        void travCompound();
+
         std::string filename  = "yapc.output.tex";
         std::string texHeader = "\\documentclass{minimal} \n\
 \\usepackage[a4paper,margin=1cm,landscape]{geometry} \n\
@@ -28,9 +38,11 @@ namespace yapc {
 \\begin{document}\n\
 \\begin{center}\n\
 \\begin{tikzpicture}[\n\
-    fact/.style={rectangle, draw=none, rounded corners=1mm, fill=blue, drop shadow,\n\
-        text centered, anchor=north, text=white},\n\
+    program/.style={circle, draw=none, fill=purple, drop shadow,\n\
+        text centered, anchor=north, text=black},\n\
     state/.style={circle, draw=none, fill=orange, circular drop shadow,\n\
+        text centered, anchor=north, text=white},\n\
+    subproc/.style={rectangle, draw=none, rounded corners=1mm, fill=blue, drop shadow,\n\
         text centered, anchor=north, text=white},\n\
     leaf/.style={circle, draw=none, fill=red, circular drop shadow,\n\
         text centered, anchor=north, text=white},\n\
