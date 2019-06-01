@@ -96,7 +96,10 @@ program: program_header SEMICOLON proc_block DOT TERMINATE {
     }
     ;
 
-program_header: PROGRAM IDENTIFIER {$$ = MakeAST<ProgHeadAST>(MakeAST<VoidTypeAST>(), MakeAST<IdentifierAST>($2), MakeAST<ParamListAST>());}
+program_header: PROGRAM IDENTIFIER {
+        $$ = MakeAST<ProgHeadAST>(MakeAST<VoidTypeAST>(), MakeAST<IdentifierAST>($2), MakeAST<ParamListAST>());
+        std::cout<<$2<<std::endl;
+    }
     ;
 
 proc_block: const_decl_part type_decl_part var_decl_part subproc_decl_part compound_part {

@@ -20,7 +20,10 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<ParamListAST> params;
 
-        ProgHeadAST(const std::shared_ptr<TypeAST> typeval, const std::shared_ptr<IdentifierAST> nameval, const std::shared_ptr<ParamListAST> paramval) : type(typeval), name(nameval), params(paramval) {}
+        ProgHeadAST(const std::shared_ptr<TypeAST> typeval,
+                    const std::shared_ptr<IdentifierAST> nameval,
+                    const std::shared_ptr<ParamListAST> paramval)
+                    : type(typeval), name(nameval), params(paramval) {}
 
         genValue codegen(genContext context) override {}
     };
@@ -36,9 +39,9 @@ namespace yapc {
         std::shared_ptr<CompoundStmtAST> progbody;
 
         ProgBlockAST(const std::shared_ptr<ConstDeclListAST>& constpart, const std::shared_ptr<TypeDeclListAST>& typepart,
-            const std::shared_ptr<VarDeclListAST>& varpart, const std::shared_ptr<ProgListAST>& progpart,
-            const std::shared_ptr<CompoundStmtAST>& progbody)
-            : constpart(constpart), typepart(typepart), varpart(varpart), progpart(progpart), progbody(progbody) {}
+                    const std::shared_ptr<VarDeclListAST>& varpart, const std::shared_ptr<ProgListAST>& progpart,
+                    const std::shared_ptr<CompoundStmtAST>& progbody)
+                    : constpart(constpart), typepart(typepart), varpart(varpart), progpart(progpart), progbody(progbody) {}
 
         genValue codegen(genContext context) override {}
     };

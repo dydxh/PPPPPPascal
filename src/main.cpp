@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include "Driver.hpp"
+#include "utils/ASTvis.hpp"
 
 
 #include "llvm/Support/FileSystem.h"
@@ -69,12 +70,12 @@ void OutputResult(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileTy
 
 int main(const int argc, const char** argv) {
 
-    /*
+
     if(argc < 2) {
         std::cout << "[Usage]: ./[elf] [source]" << std::endl;
         return 0;
     }
-     */
+
 
 
     yapc::Driver* driver;
@@ -86,8 +87,11 @@ int main(const int argc, const char** argv) {
         std::cerr << "Failed to allocate driver: (" << msg.what() << "), exit." << std::endl;
         return false;
     }
-    //driver->Parse(argv[1]);
-    driver->Parse("/Users/zuhxs/Documents/GitHub/PPPPPPascal/test/a.pas");
+
+    driver->Parse(argv[1]);
+    yapc::ASTvis astVis;
+    astVis.travAST(context);
+    printf("bbb");
     CodeGenUtils genContext("main");
     auto program = context.program;
     try {

@@ -41,6 +41,8 @@ file(GLOB SOURCE_FILES
         "src/AST/*.hpp"
         "src/codeGen/*.hpp"
         "src/codeGen/*.cpp"
+        "src/utils/*.hpp"
+        "src/utils/*.cpp"
         )
 
 add_executable(

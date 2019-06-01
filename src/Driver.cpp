@@ -40,5 +40,6 @@ bool yapc::Driver::Parse(const std::string& filename) {
         std::cerr << "Parse failed." << std::endl;
         return false;
     }
+    std::cout << "\n\n>>>>>>>>>>>>>>>==========parse over!==========<<<<<<<<<<<<<<<" << std::endl;
     return true;
 }
