@@ -12,14 +12,9 @@ namespace yapc {
         }
         ~IdentifierAST() = default;
 
-<<<<<<< HEAD
         genValue codegen(genContext context) override;
         llvm::Value *GetPtr(CodeGenUtils &context);
         std::string &GetName() {return name;}
-=======
-        genValue codegen(genContext context) override {}
-        std::string &GetName() {std::cout<<"hello--" << name <<std::endl;return name;}
->>>>>>> b2855db0bb9c4949fd76a9cba81a6ca458f05d6b
 
     protected:
         std::string name;
