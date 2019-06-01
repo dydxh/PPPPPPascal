@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include "Driver.hpp"
+#include "utils/ASTvis.hpp"
 
 
 #include "llvm/Support/FileSystem.h"
@@ -43,6 +44,8 @@ int main(const int argc, const char** argv) {
         return false;
     }
     driver->Parse(argv[1]);
+    yapc::ASTvis astVis;
+    astVis.travAST(context);
     printf("bbb");
     CodeGenUtils genContext("main");
     printf("ccc");
