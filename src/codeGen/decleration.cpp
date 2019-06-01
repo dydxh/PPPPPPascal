@@ -7,7 +7,6 @@
 namespace yapc {
 
     genValue ConstDeclAST::codegen(CodeGenUtils &context) {
-        printf("fff");
         if (context.is_subroutine) {
             // TODO: String check
             auto *local = context.GetBuilder().CreateAlloca(value->GetType(context));
@@ -37,12 +36,13 @@ namespace yapc {
             auto *type = this->type->GetType(context);
             llvm::Constant *constant;
             switch (this->type->type) {
-                case Type::LONGINT: constant = llvm::ConstantInt::get(type, 0);
-                case Type::INTEGER: constant = llvm::ConstantInt::get(type, 0);
-                case Type::REAL: constant = llvm::ConstantFP::get(type, 0.0);
-                case Type::BOOLEAN: constant = llvm::ConstantInt::get(type, 0);
+                case Type::LONGINT: constant = llvm::ConstantInt::get(type, 0); break;
+                case Type::INTEGER: constant = llvm::ConstantInt::get(type, 0); break;
+                case Type::REAL: constant = llvm::ConstantFP::get(type, 0.0); break;
+                case Type::BOOLEAN: constant = llvm::ConstantInt::get(type, 0); break;
                 default: throw CodegenException("unsupported type");  // TODO String support
             }
+            return new llvm::GlobalVariable(*context.GetModule(), type, false, llvm::GlobalVariable::ExternalLinkage, constant, name->GetName());
         };
     }
 

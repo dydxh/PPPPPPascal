@@ -76,6 +76,9 @@ namespace yapc {
         std::unique_ptr<llvm::Module> &GetModule() {
             return TheModule;
         }
+        void dump() {
+            TheModule.get()->dump();
+        }
 
 
     private:

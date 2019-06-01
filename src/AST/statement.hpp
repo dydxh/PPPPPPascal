@@ -21,7 +21,7 @@ namespace yapc {
             : expr(expr), stmt(stmt), else_stmt(else_stmt) {}
         ~IfStmtAST() = default;
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class WhileStmtAST : public StmtAST {
@@ -78,7 +78,7 @@ namespace yapc {
 
         AssignStmtAST(const std::shared_ptr<ExprAST>& lval, const std::shared_ptr<ExprAST>& rval) : lhs(lval), rhs(rval) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 }
 
