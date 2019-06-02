@@ -7,17 +7,14 @@
 namespace yapc {
 
     genValue ConstDeclAST::codegen(CodeGenUtils &context) {
-        if (context.is_subroutine) {
-            // TODO: String check
-            auto *local = context.GetBuilder().CreateAlloca(value->GetType(context));
-            auto success = context.SetValue(name->GetName(), local);
-            if (!success) {
-                throw CodegenException("duplicate identifier with const " + name->GetName());
-            }
-            context.GetBuilder().CreateStore(value->codegen(context), local);
-            return local;
+        if (context.is_subroutine) {   // not main funciton
+            auto *constant = llvm::cast<llvm::Constant>(value->codegen(context));
+            std::string prefix(std::move(context.GetTrace().back()));
+            std::cout << prefix << std::endl;
+            context.GetTrace().push_back(prefix);
+            return new llvm::GlobalVariable(*context.GetModule(), value->GetType(context), true, llvm::GlobalVariable::ExternalLinkage, constant, prefix + "_" + name->GetName());
         }
-        else {
+        else {  // main function
             // TODO String check
             auto *constant = llvm::cast<llvm::Constant>(value->codegen(context));
             return new llvm::GlobalVariable(*context.GetModule(), value->GetType(context), true, llvm::GlobalVariable::ExternalLinkage, constant, name->GetName());
@@ -26,16 +23,26 @@ namespace yapc {
 
     genValue VarDeclAST::codegen(CodeGenUtils &context) {
         if (context.is_subroutine) {
-            auto *local = context.GetBuilder().CreateAlloca(type->GetType(context));
-            auto success = context.SetValue(name->GetName(), local);
-            if (!success)
-                throw CodegenException("duplicate identifier with var " + name->GetName());
-            return local;
-        }
-        else {
             auto *type = this->type->GetType(context);
             llvm::Constant *constant;
-            switch (this->type->type) {
+
+            switch (this->type->type) {  // TODO: new type support
+                case Type::LONGINT: constant = llvm::ConstantInt::get(type, 0); break;
+                case Type::INTEGER: constant = llvm::ConstantInt::get(type, 0); break;
+                case Type::REAL: constant = llvm::ConstantFP::get(type, 0.0); break;
+                case Type::BOOLEAN: constant = llvm::ConstantInt::get(type, 0); break;
+                default: throw CodegenException("unsupported type");  // TODO String support
+            }
+            std::string prefix(std::move(context.GetTrace().back()));
+            std::cout << prefix << std::endl;
+            context.GetTrace().push_back(prefix);
+            return new llvm::GlobalVariable(*context.GetModule(), type, false, llvm::GlobalVariable::ExternalLinkage, constant, prefix + "_" + name->GetName());
+        }
+        else {    // main function
+            auto *type = this->type->GetType(context);
+            llvm::Constant *constant;
+
+            switch (this->type->type) {  // TODO: new type support
                 case Type::LONGINT: constant = llvm::ConstantInt::get(type, 0); break;
                 case Type::INTEGER: constant = llvm::ConstantInt::get(type, 0); break;
                 case Type::REAL: constant = llvm::ConstantFP::get(type, 0.0); break;

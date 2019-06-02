@@ -31,11 +31,14 @@ namespace yapc {
                 case Type::INTEGER: return context.GetBuilder().getInt32Ty();
                 case Type::LONGINT: return context.GetBuilder().getInt32Ty();
                 case Type::REAL: return context.GetBuilder().getDoubleTy();
-                default: return nullptr;
+                default: throw CodegenException("Unsupported type");
             }
         }
         else if (auto *DecType = dynamic_cast<const DeclTypeAST*>(this)) {
             return context.GetAlias(DecType->name->GetName());
+        }
+        else if (auto *DecType = dynamic_cast<const VoidTypeAST*>(this)) {
+            return context.GetBuilder().getVoidTy();  // used for procedure
         }
         else {
             throw CodegenException("Unsupported type");

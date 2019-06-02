@@ -14,7 +14,7 @@ namespace yapc {
 
         genValue codegen(genContext context) override;
         llvm::Value *GetPtr(CodeGenUtils &context);
-        std::string &GetName() {return name;}
+        std::string GetName() {return name;}
 
     protected:
         std::string name;

@@ -42,21 +42,21 @@ namespace yapc {
         CodeGenUtils(std::string module_id) : Builder(llvm::IRBuilder<>(llvm_context)) {
             TheModule = std::make_unique<llvm::Module>(module_id, llvm_context);
         }
+
         llvm::Value *GetValue(std::string key) {
-            auto V = NamedValues[key];
-            if (!V)
-                return nullptr;
-            return V;
+            std::vector<std::string>::reverse_iterator r_iter;
+            for (r_iter = Traces.rbegin(); r_iter != Traces.rend(); ++r_iter) {
+                auto V = *r_iter;
+                std::string symbol = V + "_" + key;
+                auto *value = TheModule.get()->getGlobalVariable(symbol);
+                if (!value) {
+                    continue;
+                }
+                return value;
+            }
+            return nullptr;
         };
-        bool SetValue(std::string key, llvm::Value *value) {
-            if (GetValue(key))
-                return false;
-            NamedValues[key] = value;
-            return true;
-        }
-        void ResetValue() {
-            NamedValues.clear();
-        }
+
         llvm::Type *GetAlias(std::string key) {
             auto V = Aliases[key];
             if (!V)
@@ -79,13 +79,18 @@ namespace yapc {
         void dump() {
             TheModule.get()->dump();
         }
+        std::vector<std::string> &GetTrace() {
+            return Traces;
+        }
 
 
     private:
         llvm::IRBuilder<> Builder;
         std::unique_ptr<llvm::Module> TheModule;
-        std::map<std::string, llvm::Value *> NamedValues;
+        //std::vector<std::map<std::string, llvm::Value *>> NamedValues1;
+        //std::map<std::string, llvm::Value *> NamedValues;
         std::map<std::string, llvm::Type *> Aliases;
+        std::vector<std::string> Traces;
 
     };
 

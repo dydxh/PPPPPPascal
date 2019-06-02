@@ -55,6 +55,8 @@ namespace yapc {
             : proghead(prog_head), progblock(prog_block) {}
 
         genValue codegen(genContext context) override;
+
+        bool IsSubroutine;
     };
 }
 

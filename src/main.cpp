@@ -70,11 +70,12 @@ void OutputResult(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileTy
 
 int main(const int argc, const char** argv) {
 
-
+    /*
     if(argc < 2) {
         std::cout << "[Usage]: ./[elf] [source]" << std::endl;
         return 0;
     }
+     */
 
 
 
@@ -88,7 +89,8 @@ int main(const int argc, const char** argv) {
         return false;
     }
 
-    driver->Parse(argv[1]);
+    //driver->Parse(argv[1]);
+    driver->Parse("/Users/zuhxs/Documents/GitHub/PPPPPPascal/test/a.pas");
     yapc::ASTvis astVis;
     astVis.travAST(context);
     printf("bbb");

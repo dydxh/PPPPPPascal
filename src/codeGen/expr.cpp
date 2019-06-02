@@ -10,6 +10,7 @@ namespace yapc {
     // TODO: powi supporting (llvm::Intrinsic::powi)
 
     genValue BinaryExprAST::codegen(genContext context) {
+        std::cout << "inside binary expr" << std::endl;
         auto *lhs = this->lhs->codegen(context);
         auto *rhs = this->rhs->codegen(context);
         std::map<BinaryOp, llvm::CmpInst::Predicate> BTypeAlt = {
@@ -29,7 +30,11 @@ namespace yapc {
                 {BinaryOp::NE, llvm::CmpInst::FCMP_ONE}
         };
 
+        //lhs = context.GetBuilder().CreateLoad(lhs);
+        //return context.GetBuilder().CreateICmp(llvm::CmpInst::ICMP_EQ, rhs, rhs);
+
         if (lhs->getType()->isDoubleTy() || rhs->getType()->isDoubleTy()) {
+            std::cout << "debug1" <<std::endl;
             if (!lhs->getType()->isDoubleTy()) {
                 lhs = context.GetBuilder().CreateSIToFP(lhs, context.GetBuilder().getDoubleTy());
             }
@@ -52,6 +57,7 @@ namespace yapc {
         }
 
         else if (lhs->getType()->isIntegerTy(1) && rhs->getType()->isIntegerTy(1)) {
+            std::cout << "debug1" <<std::endl;
             auto it = BTypeAlt.find(op);
             if (it != BTypeAlt.end()) {
                 return context.GetBuilder().CreateICmp(it->second, lhs, rhs);
@@ -67,6 +73,8 @@ namespace yapc {
         }
 
         else if (lhs->getType()->isIntegerTy(32) && rhs->getType()->isIntegerTy(32)) {
+            std::cout << "debug2" <<std::endl;
+            printf("inside int32 and int32.\n");
             auto it = BTypeAlt.find(op);
             if (it != BTypeAlt.end()) {
                 return context.GetBuilder().CreateICmp(it->second, lhs, rhs);
@@ -87,12 +95,24 @@ namespace yapc {
                     binop = llvm::Instruction::FDiv; break;
                 default: throw CodegenException("operator not valid");
             }
+            return context.GetBuilder().CreateBinOp(binop, lhs, rhs);
         }
 
 
     }
 
-
+    genValue CustomFuncAST::codegen(CodeGenUtils &context) {
+        printf("inside custom func");
+        auto *func = context.GetModule().get()->getFunction(name->GetName());
+        if (func->arg_size() != args->get_children().size()) {
+            throw CodegenException("Argument not match for function " + name->GetName());
+        }
+        std::vector<llvm::Value *> values;
+        for (auto &arg : args->get_children()) {
+            values.push_back(arg->codegen(context));
+        }
+        return context.GetBuilder().CreateCall(func, values);
+    }
 
 
 }

@@ -31,7 +31,7 @@ namespace yapc {
 
         WhileStmtAST(const std::shared_ptr<ExprAST>& expr, const std::shared_ptr<CompoundStmtAST>& stmt) : expr(expr), stmt(stmt) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     enum class Direct {
@@ -49,7 +49,7 @@ namespace yapc {
         ForStmtAST(Direct dir, const std::shared_ptr<IdentifierAST>& identifier, const std::shared_ptr<ExprAST>& startval, const std::shared_ptr<ExprAST>& endval, const std::shared_ptr<CompoundStmtAST>& stmt)
             : direct(dir), identifier(identifier), start_val(startval), end_val(endval), stmt(stmt) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class RepeatStmtAST : public StmtAST {
