@@ -4,27 +4,38 @@
 #include "context.hpp"
 #include "AST/frame.hpp"
 
+#include <fstream>
+
 namespace yapc {
     class ASTvis {
     public:
-        ASTvis() = default;
+        ASTvis() : of("yapc.output.tex", of.trunc | of.out)
+        {
+            if (!of.is_open())
+            {
+                std::cout << "failed to open file\n";
+            }
+        }
         ~ASTvis() = default;
         void travAST(Context& context);
 
     private:
-        void travProgram(const std::shared_ptr<ProgramAST>& program, std::fstream& s );
-        void travProcedure();
-        void travFunc();
+        int travProgram(const std::shared_ptr<ProgramAST>& program);
+        int travProgramBody(const std::shared_ptr<ProgramAST>& program);
 
-        void travCONST();
-        void travTYPE();
-        void travVAR();
-        void travSubproc();
-        void travCompound();
+        int travCONST(const std::shared_ptr<ConstDeclListAST>& const_declListAST);
+        int travTYPE(const std::shared_ptr<TypeDeclListAST>& type_declListAST);
+        int travVAR(const std::shared_ptr<VarDeclListAST>& var_declListAST);
+        int travSubprocList(const std::shared_ptr<ProgListAST>& subProc_declListAST);
+        int travSubproc(const std::shared_ptr<ProgramAST>& subProc_AST);
+        int travCompound(const std::shared_ptr<CompoundStmtAST>& compound_declListAST);
 
-        std::string filename  = "yapc.output.tex";
+        int node_cnt    = 0;
+        int subproc_cnt = 0;
+        int stmt_cnt    = 0;
+        int leaf_cnt    = 0;
+        std::fstream of;
         std::string texHeader = "\\documentclass{minimal} \n\
-\\usepackage[a4paper,margin=1cm,landscape]{geometry} \n\
 \\usepackage{tikz} \n\n\
 \%\%\%< \n\
 \\usepackage{verbatim} \n\
@@ -32,23 +43,23 @@ namespace yapc {
 \\PreviewEnvironment{tikzpicture} \n\
 \\setlength\\PreviewBorder{5pt}% \n\%\%\%> \n\n\
 \\begin{comment} \n\
-:Title:  Rule based diagram \n\n\
-\\end{comment} \n\n\
-\\usetikzlibrary{positioning,shadows,arrows} \n\n\
+:Title: AST                 \n\
+:Tags: Trees; Syntax        \n\
+:Author: Eric Morris        \n\
+:Slug: abstract-syntax-tree \n\
+\\end{comment} \n\n\n\n\
+\\usetikzlibrary{trees}  \n\n\n\
 \\begin{document}\n\
-\\begin{center}\n\
+\\tikzstyle{every node}=[draw=black,thick,anchor=west]  \n\
+\\tikzstyle{selected}=[draw=red,fill=red!30]            \n\
+\\tikzstyle{optional}=[dashed,fill=gray!50]             \n\
 \\begin{tikzpicture}[\n\
-    program/.style={circle, draw=none, fill=purple, drop shadow,\n\
-        text centered, anchor=north, text=black},\n\
-    state/.style={circle, draw=none, fill=orange, circular drop shadow,\n\
-        text centered, anchor=north, text=white},\n\
-    subproc/.style={rectangle, draw=none, rounded corners=1mm, fill=blue, drop shadow,\n\
-        text centered, anchor=north, text=white},\n\
-    leaf/.style={circle, draw=none, fill=red, circular drop shadow,\n\
-        text centered, anchor=north, text=white},\n\
-    level distance=0.5cm, growth parent anchor=south\n\
+    grow via three points={one child at (0.5,-0.7) and   \n\
+    two children at (0.5,-0.7) and (0.5,-1.4)},          \n\
+    edge from parent path={(\\tikzparentnode.south) |- (\\tikzchildnode.west)}  \n\
 ]\n";
-        std::string texTail = ";\n\n\\end{tikzpicture}\n\\end{center}\n\\end{document}\n";
+        std::string texTail = ";\n\n\\end{tikzpicture}\n\\end{document}\n";
+        std::string texNone = "child [missing] {}\n";
     };
 }
 
