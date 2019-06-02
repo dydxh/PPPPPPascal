@@ -91,7 +91,6 @@ int main(const int argc, const char** argv) {
     driver->Parse(argv[1]);
     yapc::ASTvis astVis;
     astVis.travAST(context);
-    printf("bbb");
     CodeGenUtils genContext("main");
     auto program = context.program;
     try {
