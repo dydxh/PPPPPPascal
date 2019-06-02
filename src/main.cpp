@@ -43,26 +43,21 @@ void OutputResult(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileTy
     llvm::InitializeAllTargetMCs();
     llvm::InitializeAllAsmParsers();
     llvm::InitializeAllAsmPrinters();
-
     auto target_triple = llvm::sys::getDefaultTargetTriple();
     module.setTargetTriple(target_triple);
-
     std::string error;
     auto target = llvm::TargetRegistry::lookupTarget(target_triple, error);
     if (!target)
     { std::cout << error; exit(1); }
-
     auto cpu = "generic";
     auto features = "";
     llvm::TargetOptions opt;
     auto rm = llvm::Optional<llvm::Reloc::Model>();
     auto target_machine = target->createTargetMachine(target_triple, cpu, features, opt, rm);
     module.setDataLayout(target_machine->createDataLayout());
-
     llvm::legacy::PassManager pass;
     if (target_machine->addPassesToEmitFile(pass, dest, nullptr, type))
     { std::cout << "The target machine cannot emit an object file"; exit(1); }
-
     pass.run(module);
     dest.flush();
 }
@@ -70,12 +65,11 @@ void OutputResult(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileTy
 
 int main(const int argc, const char** argv) {
 
-    /*
+
     if(argc < 2) {
         std::cout << "[Usage]: ./[elf] [source]" << std::endl;
         return 0;
     }
-     */
 
 
 
@@ -89,11 +83,9 @@ int main(const int argc, const char** argv) {
         return false;
     }
 
-    //driver->Parse(argv[1]);
-    driver->Parse("/Users/zuhxs/Documents/GitHub/PPPPPPascal/test/a.pas");
+    driver->Parse(argv[1]);
     yapc::ASTvis astVis;
     astVis.travAST(context);
-    printf("bbb");
     CodeGenUtils genContext("main");
     auto program = context.program;
     try {

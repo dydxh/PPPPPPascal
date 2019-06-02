@@ -77,7 +77,7 @@ namespace yapc {
             return TheModule;
         }
         void dump() {
-            TheModule.get()->dump();
+            TheModule.get()->print(llvm::errs(), nullptr);
         }
         std::vector<std::string> &GetTrace() {
             return Traces;

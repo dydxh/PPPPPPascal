@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")# -Wno-deprecated-register")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 project(yapc)
 
@@ -53,7 +53,6 @@ add_executable(
         ${FLEX_yapc_lexer_OUTPUTS}
         ${BISON_yapc_parser_OUTPUTS}
         src/codeGen/frame.cpp src/codeGen/decleration.cpp src/utils/ast.hpp src/codeGen/type.cpp)
-#        src/codeGen/expr.cpp src/codeGen/codeGen_utils.hpp)
 target_include_directories(${CMAKE_PROJECT_NAME}
         PRIVATE
         .
