@@ -83,10 +83,10 @@ namespace yapc {
             return Traces;
         }
 
-
+    public:
+        std::unique_ptr<llvm::Module> TheModule;
     private:
         llvm::IRBuilder<> Builder;
-        std::unique_ptr<llvm::Module> TheModule;
         //std::vector<std::map<std::string, llvm::Value *>> NamedValues1;
         //std::map<std::string, llvm::Value *> NamedValues;
         std::map<std::string, llvm::Type *> Aliases;

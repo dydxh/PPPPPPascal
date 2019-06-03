@@ -215,52 +215,185 @@ int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::StmtAST>&p_stmp)
     of << "child { node {Base Statment}}\n";
     return 0;
 }
-
+// * done
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::IfStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
-    of << "child { node {IF Statment";
-    of << "}\n}\n";
-    std::cout << "if stmt class" << std::endl;
-    return 0;
+    int tmp = 0, lines = 0;
+    of << "child { node {IF Statment if expr}\n";
+    tmp = travExpr(p_stmp->expr);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+    of << "child { node {IF Statment if stmt}\n";
+    tmp = travCompound(p_stmp->stmt);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+    of << "child { node {IF Statment else stmt}\n";
+    tmp = travCompound(p_stmp->else_stmt);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+
+    return lines;
 }
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::WhileStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
-    of << "child { node {WHILE Statment";
-    of << "}\n}\n";
-    std::cout << "while stmt class" << std::endl;
-    return 0;
+    int tmp = 0, lines = 0;
+    of << "child { node {WHILE Expr}";
+    tmp = travExpr(p_stmp->expr);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+    of << "child { node {WHILE Statment}\n";
+    tmp = travCompound(p_stmp->stmt);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+    return lines;
 }
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::ForStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
-    of << "child { node {FOR Statment";
-    of << "}\n}\n";
-    std::cout << "for stmt class" << std::endl;
-    return 0;
+    int tmp = 0, lines = 0;
+    of << "child { node {FOR Expr: ";
+    of << p_stmp->identifier->GetName() << " }\n ";
+
+    tmp += travExpr(p_stmp->start_val);
+    // of << texNone;
+    tmp += travExpr(p_stmp->end_val);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+
+    of << "child { node {FOR Statment}\n";
+    tmp = travCompound(p_stmp->stmt);
+    of << "}\n";
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp;
+
+    return lines;
 }
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::RepeatStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
+    int tmp = 0, lines = 0;
     of << "child { node {REPEAT Statment";
-    of << "}\n}\n";
-    std::cout << "repeat stmt class" << std::endl;
-    return 0;
+    // tmp = travExpr(p_stmp->expr);
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp;    of << "}\n}\n";
+    return lines;
 }
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::CallStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
+    int tmp = 0, lines = 0;
     of << "child { node {CALL Statment";
+    // tmp = travExpr(p_stmp->expr);
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp;
     of << "}\n}\n";
-    std::cout << "call stmt class" << std::endl;
-    return 0;
+    return lines;
 }
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::AssignStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
+    int tmp = 0, lines = 0;
     of << "child { node {ASSIGN Statment";
+    // tmp = travExpr(p_stmp->expr);
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp;
     of << "}\n}\n";
-    std::cout << "assign stmt class" << std::endl;
-    return 0;
+    return lines;
+}
+
+int yapc::ASTvis::travExpr(const std::shared_ptr<ExprAST>& expr)
+{
+    int tmp = 0, lines = 0;
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::BinaryExprAST>(expr));
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::UnaryExprAST>(expr));
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::ArrayAccessAST>(expr));
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::RecordAccessAST>(expr));
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::FuncCallAST>(expr));
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::CustomFuncAST>(expr));
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::SysFuncAST>(expr));
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp;
+    return lines;
+}
+
+int yapc::ASTvis::travExpr(const std::shared_ptr<BinaryExprAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+
+    of << "child { node {BINARY: ";
+    switch (expr->op)
+    {
+        case yapc::BinaryOp::EQ: of << "==";break;
+        case yapc::BinaryOp::NE: of << "!=";break;
+        case yapc::BinaryOp::LE: of << "<=";break;
+        case yapc::BinaryOp::GE: of << ">=";break;
+        case yapc::BinaryOp::LT: of << "<";break;
+        case yapc::BinaryOp::GT: of << ">";break;
+        case yapc::BinaryOp::ADD: of << "+";break;
+        case yapc::BinaryOp::SUB: of << "-";break;
+        case yapc::BinaryOp::DIV: of << "/";break;
+        case yapc::BinaryOp::SLASH: of << "//";break;
+        case yapc::BinaryOp::MOD: of << "\%";break;
+        case yapc::BinaryOp::MUL: of << "*";break;
+        case yapc::BinaryOp::OR:  of << "|";break;
+        case yapc::BinaryOp::AND: of << "&";break;
+        case yapc::BinaryOp::XOR: of << "\^";break;
+        case yapc::BinaryOp::POW: of << "**";break;
+        default: of << "????";break;
+    }
+    of << "}\n";
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::BinaryExprAST>(expr->lhs));
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp; tmp = 0;
+    tmp += travExpr(std::dynamic_pointer_cast<yapc::BinaryExprAST>(expr->rhs));
+    for (int i=0; i<tmp; ++i) of << texNone;
+    lines += tmp;
+    of << "}\n";
+
+    return lines;
+}
+int yapc::ASTvis::travExpr(const std::shared_ptr<yapc::UnaryExprAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+    return lines;
+}
+int yapc::ASTvis::travExpr(const std::shared_ptr<yapc::ArrayAccessAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+    return lines;
+}
+int yapc::ASTvis::travExpr(const std::shared_ptr<yapc::RecordAccessAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+    return lines;
+}
+int yapc::ASTvis::travExpr(const std::shared_ptr<yapc::FuncCallAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+    return lines;
+}
+int yapc::ASTvis::travExpr(const std::shared_ptr<yapc::CustomFuncAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+    return lines;
+}
+int yapc::ASTvis::travExpr(const std::shared_ptr<yapc::SysFuncAST>& expr)
+{
+    if (expr == nullptr) return 0;
+    int tmp = 0, lines = 1;
+    return lines;
 }
