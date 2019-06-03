@@ -196,7 +196,71 @@ int yapc::ASTvis::travCompound(const std::shared_ptr<yapc::CompoundStmtAST>& com
     std::list<std::shared_ptr<yapc::StmtAST>>& stmtList(compound_declListAST->get_children());
     int tmp = 0, lines = stmtList.size();
     for (auto &p : stmtList) {
-        of << "child { node {Statment}}\n";
+        tmp = 0;
+        tmp += travStmt(std::dynamic_pointer_cast<yapc::IfStmtAST>(p));
+        tmp += travStmt(std::dynamic_pointer_cast<yapc::WhileStmtAST>(p));
+        tmp += travStmt(std::dynamic_pointer_cast<yapc::ForStmtAST>(p));
+        tmp += travStmt(std::dynamic_pointer_cast<yapc::RepeatStmtAST>(p));
+        tmp += travStmt(std::dynamic_pointer_cast<yapc::CallStmtAST>(p));
+        tmp += travStmt(std::dynamic_pointer_cast<yapc::AssignStmtAST>(p));
+        lines += tmp;
+        std::cout << typeid(*p).name() << std::endl;
     }
     return lines;
+}
+
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::StmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {Base Statment}}\n";
+    return 0;
+}
+
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::IfStmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {IF Statment";
+    of << "}\n}\n";
+    std::cout << "if stmt class" << std::endl;
+    return 0;
+}
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::WhileStmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {WHILE Statment";
+    of << "}\n}\n";
+    std::cout << "while stmt class" << std::endl;
+    return 0;
+}
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::ForStmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {FOR Statment";
+    of << "}\n}\n";
+    std::cout << "for stmt class" << std::endl;
+    return 0;
+}
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::RepeatStmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {REPEAT Statment";
+    of << "}\n}\n";
+    std::cout << "repeat stmt class" << std::endl;
+    return 0;
+}
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::CallStmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {CALL Statment";
+    of << "}\n}\n";
+    std::cout << "call stmt class" << std::endl;
+    return 0;
+}
+int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::AssignStmtAST>&p_stmp)
+{
+    if (p_stmp == nullptr) return 0;
+    of << "child { node {ASSIGN Statment";
+    of << "}\n}\n";
+    std::cout << "assign stmt class" << std::endl;
+    return 0;
 }

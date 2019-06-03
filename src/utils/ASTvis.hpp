@@ -30,6 +30,14 @@ namespace yapc {
         int travSubproc(const std::shared_ptr<ProgramAST>& subProc_AST);
         int travCompound(const std::shared_ptr<CompoundStmtAST>& compound_declListAST);
 
+        int travStmt(const std::shared_ptr<StmtAST>&p_stmp);
+        int travStmt(const std::shared_ptr<IfStmtAST>&p_stmp);
+        int travStmt(const std::shared_ptr<WhileStmtAST>&p_stmp);
+        int travStmt(const std::shared_ptr<ForStmtAST>&p_stmp);
+        int travStmt(const std::shared_ptr<RepeatStmtAST>&p_stmp);
+        int travStmt(const std::shared_ptr<CallStmtAST>&p_stmp);
+        int travStmt(const std::shared_ptr<AssignStmtAST>&p_stmp);
+
         int node_cnt    = 0;
         int subproc_cnt = 0;
         int stmt_cnt    = 0;
