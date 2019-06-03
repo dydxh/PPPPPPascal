@@ -79,6 +79,49 @@ NQUOTE [^']
 [0-9]+"."[0-9]+   {std::cout << "Real Number: " << yytext; yylval->build<double>(std::stod(yytext)); return token::REALNUMBER;}
 '({NQUOTE}|'')+'  {std::cout << "STRING: " << yytext; yytext[yyleng] = 0; yylval->build<std::string>(std::string(yytext)); return token::LITERAL;}
 [a-zA-Z]([a-zA-Z0-9])*  {std::cout << "IDD: " << yytext << " "; yytext[yyleng] = 0; yylval->build<std::string>(std::string(yytext)); return token::IDENTIFIER;}
+
+"(*" {
+    char c;
+    while(c = yyinput()) {
+        if(c == '*') {
+            if((c = yyinput()) == ')')
+                break;
+            else unput(c);
+        }
+        else if(c == '\n') {
+            loc->lines();
+        }
+        else if(c == EOF) {
+            CommentError(loc);
+        }
+    }
+}
+"{" {
+    char c;
+    while(c = yyinput()) {
+        if(c == '}') break;
+        else if(c == '\n') {
+            CommentError(loc);
+            loc->lines();
+        }
+        else if(c == EOF) {
+            CommentError(loc);
+        }
+    }
+}
+"//" {
+    char c;
+    while(c = yyinput()) {
+        if(c == '\n') {
+            loc->lines();
+            break;
+        }
+        else if(c == EOF) {
+            break;
+        }
+    }
+}
+
 ":="        {std::cout << yytext;  return token::ASSIGNMENT;}
 ":"         {std::cout << yytext;  return token::COLON;}
 ","         {std::cout << yytext; return token::COMMA;}
@@ -111,3 +154,8 @@ NQUOTE [^']
            }
 
 %%
+
+void Scanner::CommentError(yapc::Parser::location_type* loc) {
+    std::cerr << "Unexcepted EOF in comment at line: " << loc->end.line << std::endl;
+    throw std::runtime_error("EOF error: Unexcepted EOF in comment");
+}

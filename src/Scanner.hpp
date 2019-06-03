@@ -19,6 +19,8 @@ public:
     using FlexLexer::yylex;
     virtual int yylex(yapc::Parser::semantic_type* lval, yapc::Parser::location_type* loc);
 
+    void CommentError(yapc::Parser::location_type* loc);
+
 private:
     yapc::Parser::semantic_type* yylval = nullptr;
 };
