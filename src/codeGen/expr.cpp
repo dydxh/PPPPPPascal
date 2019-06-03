@@ -121,6 +121,7 @@ namespace yapc {
             auto *printf_func = context.GetModule().get()->getOrInsertFunction("printf", printf_type);
             for (auto &arg : this->args->get_children()) {
                 auto *value = arg->codegen(context);
+                auto x = value->getType();
                 std::vector<llvm::Value*> func_args;
                 if (value->getType()->isIntegerTy()) {
                     func_args.push_back(context.GetBuilder().CreateGlobalStringPtr("%d"));
@@ -130,6 +131,13 @@ namespace yapc {
                     func_args.push_back(context.GetBuilder().CreateGlobalStringPtr("%f"));
                     func_args.push_back(value);
                 }
+                else if (value->getType()->isArrayTy()) {
+                    auto real_arg = std::dynamic_pointer_cast<IdentifierAST>(arg);
+                    auto *value2 = real_arg->GetPtr(context);
+                    std::string mystr2 = value2->getName().str();
+                    func_args.push_back(context.GetBuilder().CreateGlobalStringPtr(mystr2));
+                }
+                 //   else if (value->getType()->)
                 // TODO: string support
                 else {
                     throw CodegenException("imcompatible type for sysfunc call");
