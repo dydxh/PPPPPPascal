@@ -68,7 +68,7 @@ namespace yapc {
 
         CallStmtAST(const std::shared_ptr<FuncCallAST>& func) : func(func) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 
     class AssignStmtAST : public StmtAST {

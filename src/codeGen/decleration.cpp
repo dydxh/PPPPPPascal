@@ -8,6 +8,15 @@ namespace yapc {
 
     genValue ConstDeclAST::codegen(CodeGenUtils &context) {
         if (context.is_subroutine) {   // not main funciton
+            auto IfString = std::dynamic_pointer_cast<yapc::StringAST>(value);
+            if (IfString) {
+                std::string prefix(std::move(context.GetTrace().back()));
+                std::cout << prefix << std::endl;
+                context.GetTrace().push_back(prefix);
+                auto *constant = llvm::cast<llvm::Constant>(context.GetBuilder().CreateGlobalStringPtr(IfString->val,  prefix + "_" + this->name->GetName()));
+                return new llvm::GlobalVariable(*context.GetModule(), context.GetBuilder().getInt32Ty(), true, llvm::GlobalVariable::ExternalLinkage, constant, prefix + "_" + this->name->GetName());
+
+            }
             auto *constant = llvm::cast<llvm::Constant>(value->codegen(context));
             std::string prefix(std::move(context.GetTrace().back()));
             std::cout << prefix << std::endl;
@@ -15,7 +24,10 @@ namespace yapc {
             return new llvm::GlobalVariable(*context.GetModule(), value->GetType(context), true, llvm::GlobalVariable::ExternalLinkage, constant, prefix + "_" + name->GetName());
         }
         else {  // main function
-            // TODO String check
+            auto IfString = std::dynamic_pointer_cast<yapc::StringAST>(value);
+            if (IfString) {
+                return context.GetBuilder().CreateGlobalString(IfString->val,  this->name->GetName());
+            }
             auto *constant = llvm::cast<llvm::Constant>(value->codegen(context));
             return new llvm::GlobalVariable(*context.GetModule(), value->GetType(context), true, llvm::GlobalVariable::ExternalLinkage, constant, name->GetName());
         }

@@ -101,7 +101,7 @@ namespace yapc {
                 case Type::INTEGER: return context.GetBuilder().getInt32Ty();
                 case Type::LONGINT: return context.GetBuilder().getInt32Ty();
                 case Type::REAL: return context.GetBuilder().getDoubleTy();
-                case Type::STRING: throw CodegenException("string currently not supported.\n");
+                //case Type::STRING: throw CodegenException("string currently not supported.\n");
                 default: return nullptr;
             }
         }

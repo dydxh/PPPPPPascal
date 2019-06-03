@@ -97,8 +97,6 @@ namespace yapc {
             }
             return context.GetBuilder().CreateBinOp(binop, lhs, rhs);
         }
-
-
     }
 
     genValue CustomFuncAST::codegen(CodeGenUtils &context) {
@@ -114,5 +112,35 @@ namespace yapc {
         return context.GetBuilder().CreateCall(func, values);
     }
 
+
+    genValue SysFuncAST::codegen(CodeGenUtils &context) {
+        std::cout << "inside sysfunc" << std::endl;
+        if (name == SysFunc::WRITE || name == SysFunc::WRITELN) {
+            auto *char_ptr = context.GetBuilder().getInt8Ty()->getPointerTo();
+            auto *printf_type = llvm::FunctionType::get(context.GetBuilder().getInt32Ty(), char_ptr, true);
+            auto *printf_func = context.GetModule().get()->getOrInsertFunction("printf", printf_type);
+            for (auto &arg : this->args->get_children()) {
+                auto *value = arg->codegen(context);
+                std::vector<llvm::Value*> func_args;
+                if (value->getType()->isIntegerTy()) {
+                    func_args.push_back(context.GetBuilder().CreateGlobalStringPtr("%d"));
+                    func_args.push_back(value);
+                }
+                else if (value->getType()->isDoubleTy()) {
+                    func_args.push_back(context.GetBuilder().CreateGlobalStringPtr("%f"));
+                    func_args.push_back(value);
+                }
+                // TODO: string support
+                else {
+                    throw CodegenException("imcompatible type for sysfunc call");
+                }
+                context.GetBuilder().CreateCall(printf_func, func_args);
+            }
+            if (name == SysFunc::WRITELN) {
+                context.GetBuilder().CreateCall(printf_func, context.GetBuilder().CreateGlobalStringPtr("\n"));
+            }
+            return nullptr;
+        }
+    }
 
 }

@@ -21,7 +21,8 @@ namespace yapc {
     }
 
     genValue StringAST::codegen(CodeGenUtils &context) {
-        return context.GetBuilder().CreateGlobalStringPtr(val);
+        auto *type = context.GetBuilder().CreateGlobalString(val);
+        return type;
     }
 
     llvm::Type *TypeAST::GetType(CodeGenUtils &context) {
