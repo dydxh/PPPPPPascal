@@ -84,8 +84,10 @@ namespace yapc {
         }
 
     public:
-        std::unique_ptr<llvm::Module> TheModule;
+        std::unique_ptr<llvm::legacy::FunctionPassManager> fpm;
+        std::unique_ptr<llvm::legacy::PassManager> mpm;
     private:
+        std::unique_ptr<llvm::Module> TheModule;
         llvm::IRBuilder<> Builder;
         //std::vector<std::map<std::string, llvm::Value *>> NamedValues1;
         //std::map<std::string, llvm::Value *> NamedValues;

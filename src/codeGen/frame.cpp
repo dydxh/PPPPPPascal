@@ -26,6 +26,12 @@ namespace yapc {
             context.is_subroutine = true;
             progblock->progpart->codegen(context);
             context.is_subroutine = false;
+
+            // llvm::verifyFunction(*main_func, &llvm::errs());
+            // if (context.fpm)
+            // { context.fpm->run(*main_func); }
+            // if (context.mpm)
+            // { context.mpm->run(*(context.GetModule())); }
         }
         else {
             context.GetTrace().push_back(proghead->name->GetName());  // push back the trace
@@ -102,6 +108,10 @@ namespace yapc {
             } else {
                 context.GetBuilder().CreateRetVoid();
             }
+
+            // llvm::verifyFunction(*func, &llvm::errs());
+            // if (context.fpm)
+            // { context.fpm->run(*func); }
 
             return nullptr;
 

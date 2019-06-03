@@ -64,7 +64,10 @@ void emit_target(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileTyp
     if (target_machine->addPassesToEmitFile(pass, dest, nullptr, type))
     { llvm::errs() << "The target machine cannot emit an object file"; exit(1); }
 
+    std::cout << "flag1" << std::endl;
     pass.run(module);
+    std::cout << "flag2" << std::endl;
+
     dest.flush();
 }
 
@@ -123,9 +126,9 @@ int main(const int argc, const char** argv)
 
     switch (target)
     {
-        case Target::LLVM: genContext.TheModule->print(fd, nullptr); break;
-        case Target::ASM: emit_target(fd, llvm::TargetMachine::CGFT_AssemblyFile, *genContext.TheModule); break;
-        case Target::OBJ: emit_target(fd, llvm::TargetMachine::CGFT_ObjectFile, *genContext.TheModule); break;
+        case Target::LLVM: genContext.GetModule()->print(fd, nullptr); break;
+        case Target::ASM: emit_target(fd, llvm::TargetMachine::CGFT_AssemblyFile, *(genContext.GetModule())); break;
+        case Target::OBJ: emit_target(fd, llvm::TargetMachine::CGFT_ObjectFile, *(genContext.GetModule())); break;
         default: break;
     }
 
