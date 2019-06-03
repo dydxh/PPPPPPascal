@@ -9,16 +9,15 @@ namespace yapc {
     genValue ProgramAST::codegen(CodeGenUtils &context) {
 
         if (!context.is_subroutine) {    // main function
-            progblock->constpart->codegen(context);
-            progblock->typepart->codegen(context);
-            progblock->varpart->codegen(context);
-
-
             auto *func_type = llvm::FunctionType::get(context.GetBuilder().getInt32Ty(), false);
             auto *main_func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage,
                                                      "main", *context.GetModule().get());
             auto *block = llvm::BasicBlock::Create(context.GetModule().get()->getContext(), "entry", main_func);
             context.GetBuilder().SetInsertPoint(block);
+
+            progblock->constpart->codegen(context);
+            progblock->typepart->codegen(context);
+            progblock->varpart->codegen(context);
 
             //printf("aaa\n");
             progblock->progbody->codegen(context);
@@ -27,12 +26,9 @@ namespace yapc {
             context.is_subroutine = true;
             progblock->progpart->codegen(context);
             context.is_subroutine = false;
-
         }
         else {
-            std::cout << "current name: " << proghead->name->GetName() << std::endl;
             context.GetTrace().push_back(proghead->name->GetName());  // push back the trace
-            std::cout << "with prefix: " << std::move(context.GetTrace()[0]) << std::endl;
 
             std::vector<llvm::Type *> types;
             std::vector<std::string> names;
@@ -106,7 +102,6 @@ namespace yapc {
             } else {
                 context.GetBuilder().CreateRetVoid();
             }
-
 
             return nullptr;
 

@@ -72,9 +72,7 @@ namespace yapc {
         FuncCallAST() {}
         FuncCallAST(const std::shared_ptr<FuncCallAST>& call_stmt) : funccall(call_stmt) {}
 
-        genValue codegen(genContext context) override {
-            printf("inside funccall\n");
-        }
+        genValue codegen(genContext context) override {}
     };
 
     class CustomFuncAST : public FuncCallAST {
@@ -82,12 +80,8 @@ namespace yapc {
         std::shared_ptr<IdentifierAST> name;
         std::shared_ptr<ArgListAST> args;
 
-        CustomFuncAST(const std::string& name, const std::shared_ptr<ArgListAST>& args) : name(MakeAST<IdentifierAST>(name)), args(args) {
-            printf("custom 1\n");
-        }
-        CustomFuncAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<ArgListAST>& args) : name(name), args(args) {
-            printf("custom 2\n");
-        }
+        CustomFuncAST(const std::string& name, const std::shared_ptr<ArgListAST>& args) : name(MakeAST<IdentifierAST>(name)), args(args) {}
+        CustomFuncAST(const std::shared_ptr<IdentifierAST>& name, const std::shared_ptr<ArgListAST>& args) : name(name), args(args) {}
 
         CustomFuncAST(const std::string& name) : name(MakeAST<IdentifierAST>(name)), args(nullptr) {}
         CustomFuncAST(const std::shared_ptr<IdentifierAST>& name) : name(name), args(nullptr) {}
@@ -103,7 +97,7 @@ namespace yapc {
         SysFuncAST(const SysFunc& name, const std::shared_ptr<ArgListAST>& args) : name(name), args(args) {}
         SysFuncAST(const SysFunc& name) : name(name), args(nullptr) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
     };
 }
 

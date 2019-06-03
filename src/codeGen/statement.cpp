@@ -96,7 +96,12 @@ namespace yapc {
         auto iter = MakeAST<AssignStmtAST>(identifier, MakeAST<BinaryExprAST>(upto ? BinaryOp::ADD : BinaryOp::SUB, identifier, MakeAST<IntegerAST>(1)));
         auto compound = MakeAST<CompoundStmtAST>();
 
-        // TODO: 还不会写
+        // TODO
     }
 
+
+    genValue CallStmtAST::codegen(CodeGenUtils &context) {
+        func->codegen(context);
+        return nullptr;
+    }
 }
