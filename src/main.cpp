@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <utility>
 #include "Driver.hpp"
@@ -36,42 +37,58 @@
 
 
 
-/*
-void OutputResult(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileType type, llvm::Module &module) {
+void emit_target(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileType type, llvm::Module &module)
+{
     llvm::InitializeAllTargetInfos();
     llvm::InitializeAllTargets();
     llvm::InitializeAllTargetMCs();
     llvm::InitializeAllAsmParsers();
     llvm::InitializeAllAsmPrinters();
+
     auto target_triple = llvm::sys::getDefaultTargetTriple();
     module.setTargetTriple(target_triple);
+
     std::string error;
     auto target = llvm::TargetRegistry::lookupTarget(target_triple, error);
     if (!target)
-    { std::cout << error; exit(1); }
+    { llvm::errs() << error; exit(1); }
+
     auto cpu = "generic";
     auto features = "";
     llvm::TargetOptions opt;
     auto rm = llvm::Optional<llvm::Reloc::Model>();
     auto target_machine = target->createTargetMachine(target_triple, cpu, features, opt, rm);
     module.setDataLayout(target_machine->createDataLayout());
+
     llvm::legacy::PassManager pass;
     if (target_machine->addPassesToEmitFile(pass, dest, nullptr, type))
-    { std::cout << "The target machine cannot emit an object file"; exit(1); }
+    {
+        llvm::errs() << "The target machine cannot emit an object file";
+        exit(1);
+    }
+
+    llvm::verifyModule(module, &llvm::errs());
+    std::cout << "flag1" << std::endl;
     pass.run(module);
+    std::cout << "flag2" << std::endl;
+
     dest.flush();
 }
- */
 
-int main(const int argc, const char** argv) {
+int main(const int argc, const char** argv)
+{
+    enum class Target
+    { UNDEFINED, LLVM, ASM, OBJ };
 
-
-    if(argc < 2) {
-        std::cout << "[Usage]: ./[elf] [source]" << std::endl;
+    if(argc < 3) {
+        std::cout << "[Usage]: ./[elf] [ir/asm/obj] [source]" << std::endl;
         return 0;
     }
 
-
+    Target target = Target::UNDEFINED;
+    if (strcmp(argv[1], "ir") == 0) target = Target::LLVM;
+    else if (strcmp(argv[1], "asm") == 0) target = Target::ASM;
+    else if (strcmp(argv[1], "obj") == 0) target = Target::OBJ;
 
     yapc::Driver* driver;
     yapc::Context context;
@@ -83,7 +100,7 @@ int main(const int argc, const char** argv) {
         return false;
     }
 
-    driver->Parse(argv[1]);
+    driver->Parse(argv[2]);
     yapc::ASTvis astVis;
     astVis.travAST(context);
     CodeGenUtils genContext("main");
@@ -95,6 +112,29 @@ int main(const int argc, const char** argv) {
     }
 
     genContext.dump();
+    std::cout << "\n\n>>>>>>>>>>>>>>>==========  IR over!==========<<<<<<<<<<<<<<<" << std::endl;
+
+    std::string output = argv[2];
+    output.erase(output.rfind('.'));
+    switch (target)
+    {
+        case Target::LLVM: output.append(".ll"); break;
+        case Target::ASM:  output.append(".s");  break;
+        case Target::OBJ:  output.append(".o");  break;
+        default: break;
+    }
+    std::error_code ec;
+    llvm::raw_fd_ostream fd(output, ec, llvm::sys::fs::F_None);
+    if (ec)
+    { llvm::errs() << "Could not open file: " << ec.message(); exit(1); }
+
+    switch (target)
+    {
+        case Target::LLVM: genContext.GetModule()->print(fd, nullptr); break;
+        case Target::ASM: emit_target(fd, llvm::TargetMachine::CGFT_AssemblyFile, *(genContext.GetModule())); break;
+        case Target::OBJ: emit_target(fd, llvm::TargetMachine::CGFT_ObjectFile, *(genContext.GetModule())); break;
+        default: break;
+    }
 
 
     return 0;

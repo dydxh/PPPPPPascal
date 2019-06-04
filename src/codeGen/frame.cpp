@@ -7,7 +7,6 @@
 
 namespace yapc {
     genValue ProgramAST::codegen(CodeGenUtils &context) {
-
         if (!context.is_subroutine) {    // main function
             auto *func_type = llvm::FunctionType::get(context.GetBuilder().getInt32Ty(), false);
             auto *main_func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage,
@@ -20,12 +19,17 @@ namespace yapc {
             progblock->varpart->codegen(context);
 
             //printf("aaa\n");
-            progblock->progbody->codegen(context);
-            context.GetBuilder().CreateRet(context.GetBuilder().getInt32(0));
 
             context.is_subroutine = true;
             progblock->progpart->codegen(context);
             context.is_subroutine = false;
+
+            context.GetBuilder().SetInsertPoint(block);
+            progblock->progbody->codegen(context);
+            context.GetBuilder().CreateRet(context.GetBuilder().getInt32(0));
+
+            llvm::verifyFunction(*main_func, &llvm::errs());
+
         }
         else {
             context.GetTrace().push_back(proghead->name->GetName());  // push back the trace
@@ -67,6 +71,7 @@ namespace yapc {
             progblock->typepart->codegen(context);
             progblock->varpart->codegen(context);
 
+
             if (proghead->type->type != Type::VOID) {   // set the return variable
                 auto *type = proghead->type->GetType(context);
                 llvm::Constant *constant;
@@ -80,7 +85,7 @@ namespace yapc {
                     throw CodegenException("Unknown function return type");
                 }
                 std::string prefix(std::move(context.GetTrace().back()));
-                std::cout << prefix << std::endl;
+                // std::cout << prefix << std::endl;
                 context.GetTrace().push_back(prefix);
                 auto *variable = new llvm::GlobalVariable(*context.GetModule(), type, false, llvm::GlobalVariable::ExternalLinkage, constant, prefix + "_" + proghead->name->GetName());
 
@@ -91,7 +96,7 @@ namespace yapc {
             progblock->progpart->codegen(context);
 
 
-            block = llvm::BasicBlock::Create(context.GetModule().get()->getContext(), "back", func);
+            //block = llvm::BasicBlock::Create(context.GetModule().get()->getContext(), "back", func);
             context.GetBuilder().SetInsertPoint(block);
             progblock->progbody->codegen(context);
 
@@ -102,6 +107,9 @@ namespace yapc {
             } else {
                 context.GetBuilder().CreateRetVoid();
             }
+
+            // ? terminator needed
+            llvm::verifyFunction(*func, &llvm::errs());
 
             return nullptr;
 

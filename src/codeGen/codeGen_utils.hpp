@@ -41,6 +41,9 @@ namespace yapc {
     public:
         CodeGenUtils(std::string module_id) : Builder(llvm::IRBuilder<>(llvm_context)) {
             TheModule = std::make_unique<llvm::Module>(module_id, llvm_context);
+            auto PrintType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context)}, true);
+            PrintfFunction = llvm::Function::Create(PrintType, llvm::Function::ExternalLinkage, "printf", *TheModule);
+            PrintfFunction->setCallingConv(llvm::CallingConv::C);
         }
 
         llvm::Value *GetValue(std::string key) {
@@ -83,10 +86,13 @@ namespace yapc {
             return Traces;
         }
 
-
+    public:
+        std::unique_ptr<llvm::legacy::FunctionPassManager> fpm;
+        std::unique_ptr<llvm::legacy::PassManager> mpm;
+        llvm::Function *PrintfFunction;
     private:
-        llvm::IRBuilder<> Builder;
         std::unique_ptr<llvm::Module> TheModule;
+        llvm::IRBuilder<> Builder;
         //std::vector<std::map<std::string, llvm::Value *>> NamedValues1;
         //std::map<std::string, llvm::Value *> NamedValues;
         std::map<std::string, llvm::Type *> Aliases;

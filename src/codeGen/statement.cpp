@@ -28,7 +28,6 @@ namespace yapc {
 
         func->getBasicBlockList().push_back(end);
         context.GetBuilder().SetInsertPoint(end);
-
     }
 
     genValue AssignStmtAST::codegen(CodeGenUtils &context) {
@@ -52,7 +51,10 @@ namespace yapc {
         if (lhs_type->isDoubleTy() && rhs_type->isIntegerTy(32)) {
             rhs = context.GetBuilder().CreateSIToFP(rhs, context.GetBuilder().getDoubleTy());
         }
-        else if (!((lhs_type->isIntegerTy(1) && rhs_type->isIntegerTy(1)) || (lhs_type->isIntegerTy(32) && rhs_type->isIntegerTy(32)) || (lhs_type->isDoubleTy() && rhs_type->isDoubleTy())))
+        else if (!((lhs_type->isIntegerTy(1) && rhs_type->isIntegerTy(1))  // bool
+                   || (lhs_type->isIntegerTy(32) && rhs_type->isIntegerTy(32))  // int
+                   || (lhs_type->isDoubleTy() && rhs_type->isDoubleTy()  // float
+                   || (lhs_type->isArrayTy() && rhs_type->isArrayTy())))) // string
         {
             throw CodegenException("incompatible assignment type");
         }

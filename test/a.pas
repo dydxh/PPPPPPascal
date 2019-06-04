@@ -23,8 +23,11 @@ VAR
 begin
     x := 3;
     test1 := 3;
+    writeln(test1);
     test1 := 4;
+    writeln(test1);
     test1 := foo2(1, 2, 1.0, 2.0);
+    writeln(test1);
 end;
 
 begin
@@ -35,4 +38,5 @@ begin
   else begin
       f := 9;
   end;
+  foo();
 end.
