@@ -2,6 +2,7 @@ program a;
 CONST
     b = 1;
     c = 2.2;
+    fuck = 'dydxh';
 VAR
     f : longint;
     g : real;
@@ -27,7 +28,7 @@ begin
     test1 := 4;
     writeln(test1);
     test1 := foo2(1, 2, 1.0, 2.0);
-    writeln(test1);
+    writeln(fuck);
 end;
 
 begin
@@ -39,4 +40,5 @@ begin
       f := 9;
   end;
   foo();
+
 end.
