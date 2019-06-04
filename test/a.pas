@@ -22,13 +22,9 @@ VAR
         foo2 := 678;
     end;
 begin
-    x := 3;
-    test1 := 3;
-    writeln(test1);
-    test1 := 4;
-    writeln(test1);
-    test1 := foo2(1, 2, 1.0, 2.0);
-    writeln(fuck);
+    for f := 1 to 10 do begin
+        j := 1 + b;
+    end;
 end;
 
 begin
@@ -40,5 +36,4 @@ begin
       f := 9;
   end;
   foo();
-
 end.

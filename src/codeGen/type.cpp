@@ -21,7 +21,7 @@ namespace yapc {
     }
 
     genValue StringAST::codegen(CodeGenUtils &context) {
-        auto *type = context.GetBuilder().CreateGlobalString(val);
+        auto *type = llvm::ConstantDataArray::getString(llvm_context, val, true);
         return type;
     }
 
@@ -32,7 +32,7 @@ namespace yapc {
                 case Type::INTEGER: return context.GetBuilder().getInt32Ty();
                 case Type::LONGINT: return context.GetBuilder().getInt32Ty();
                 case Type::REAL: return context.GetBuilder().getDoubleTy();
-                default: throw CodegenException("Unsupported type");
+                default: throw CodegenException("Unsupported type3");
             }
         }
         else if (auto *DecType = dynamic_cast<const DeclTypeAST*>(this)) {
@@ -41,8 +41,11 @@ namespace yapc {
         else if (auto *DecType = dynamic_cast<const VoidTypeAST*>(this)) {
             return context.GetBuilder().getVoidTy();  // used for procedure
         }
+        else if (auto *DecType = dynamic_cast<const StringTypeAST*>(this)) {
+            return nullptr;
+        }
         else {
-            throw CodegenException("Unsupported type");
+            throw CodegenException("Unsupported type4");
         }
     }
 

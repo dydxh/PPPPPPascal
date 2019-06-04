@@ -98,7 +98,11 @@ namespace yapc {
         auto iter = MakeAST<AssignStmtAST>(identifier, MakeAST<BinaryExprAST>(upto ? BinaryOp::ADD : BinaryOp::SUB, identifier, MakeAST<IntegerAST>(1)));
         auto compound = MakeAST<CompoundStmtAST>();
 
-        // TODO
+        compound->Merge(stmt);
+        compound->AppendChild(iter);
+        auto while_stmt = MakeAST<WhileStmtAST>(cond, compound);
+        init->codegen(context);
+        while_stmt->codegen(context);
     }
 
 

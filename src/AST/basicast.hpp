@@ -56,6 +56,12 @@ namespace yapc {
             children.push_back(orphan);
         }
 
+        void Merge(const std::shared_ptr<ListAST<T>>& orphan) {
+            for (auto &e: orphan->get_children()) {
+                children.push_back(e);
+            }
+
+        }
         void MergeAST(const std::list<std::shared_ptr<T>>& orphans) {
             for(auto& e : orphans) {
                 AppendChild(e);
