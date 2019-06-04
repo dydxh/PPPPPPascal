@@ -19,12 +19,14 @@ namespace yapc {
             progblock->varpart->codegen(context);
 
             //printf("aaa\n");
-            progblock->progbody->codegen(context);
-            context.GetBuilder().CreateRet(context.GetBuilder().getInt32(0));
 
             context.is_subroutine = true;
             progblock->progpart->codegen(context);
             context.is_subroutine = false;
+
+            context.GetBuilder().SetInsertPoint(block);
+            progblock->progbody->codegen(context);
+            context.GetBuilder().CreateRet(context.GetBuilder().getInt32(0));
 
             llvm::verifyFunction(*main_func, &llvm::errs());
 
@@ -83,7 +85,7 @@ namespace yapc {
                     throw CodegenException("Unknown function return type");
                 }
                 std::string prefix(std::move(context.GetTrace().back()));
-                std::cout << prefix << std::endl;
+                // std::cout << prefix << std::endl;
                 context.GetTrace().push_back(prefix);
                 auto *variable = new llvm::GlobalVariable(*context.GetModule(), type, false, llvm::GlobalVariable::ExternalLinkage, constant, prefix + "_" + proghead->name->GetName());
 
