@@ -62,8 +62,12 @@ void emit_target(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileTyp
 
     llvm::legacy::PassManager pass;
     if (target_machine->addPassesToEmitFile(pass, dest, nullptr, type))
-    { llvm::errs() << "The target machine cannot emit an object file"; exit(1); }
+    {
+        llvm::errs() << "The target machine cannot emit an object file";
+        exit(1);
+    }
 
+    llvm::verifyModule(module, &llvm::errs());
     std::cout << "flag1" << std::endl;
     pass.run(module);
     std::cout << "flag2" << std::endl;

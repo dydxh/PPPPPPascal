@@ -7,7 +7,6 @@
 
 namespace yapc {
     genValue ProgramAST::codegen(CodeGenUtils &context) {
-
         if (!context.is_subroutine) {    // main function
             auto *func_type = llvm::FunctionType::get(context.GetBuilder().getInt32Ty(), false);
             auto *main_func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage,
@@ -27,11 +26,8 @@ namespace yapc {
             progblock->progpart->codegen(context);
             context.is_subroutine = false;
 
-            // llvm::verifyFunction(*main_func, &llvm::errs());
-            // if (context.fpm)
-            // { context.fpm->run(*main_func); }
-            // if (context.mpm)
-            // { context.mpm->run(*(context.GetModule())); }
+            llvm::verifyFunction(*main_func, &llvm::errs());
+
         }
         else {
             context.GetTrace().push_back(proghead->name->GetName());  // push back the trace
@@ -73,6 +69,7 @@ namespace yapc {
             progblock->typepart->codegen(context);
             progblock->varpart->codegen(context);
 
+
             if (proghead->type->type != Type::VOID) {   // set the return variable
                 auto *type = proghead->type->GetType(context);
                 llvm::Constant *constant;
@@ -97,7 +94,7 @@ namespace yapc {
             progblock->progpart->codegen(context);
 
 
-            block = llvm::BasicBlock::Create(context.GetModule().get()->getContext(), "back", func);
+            //block = llvm::BasicBlock::Create(context.GetModule().get()->getContext(), "back", func);
             context.GetBuilder().SetInsertPoint(block);
             progblock->progbody->codegen(context);
 
@@ -109,9 +106,8 @@ namespace yapc {
                 context.GetBuilder().CreateRetVoid();
             }
 
-            // llvm::verifyFunction(*func, &llvm::errs());
-            // if (context.fpm)
-            // { context.fpm->run(*func); }
+            // ? terminator needed
+            llvm::verifyFunction(*func, &llvm::errs());
 
             return nullptr;
 
