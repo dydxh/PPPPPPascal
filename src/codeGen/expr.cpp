@@ -116,11 +116,6 @@ namespace yapc {
     genValue SysFuncAST::codegen(CodeGenUtils &context) {
         std::cout << "inside sysfunc" << std::endl;
         if (name == SysFunc::WRITE || name == SysFunc::WRITELN) {
-            //auto *char_ptr = context.GetBuilder().getInt8Ty()->getPointerTo();
-            //auto *printf_type = llvm::FunctionType::get(context.GetBuilder().getInt32Ty(), char_ptr, true);
-            //llvm::Function *PrintfFunction = llvm::Function::Create(printf_type, llvm::Function::ExternalLinkage, "printf", *context.GetModule());
-            //PrintfFunction->setCallingConv(llvm::CallingConv::C);
-            //auto *printf_func = context.GetModule().get()->getOrInsertFunction("printf", printf_type);
             for (auto &arg : this->args->get_children()) {
                 auto *value = arg->codegen(context);
                 auto x = value->getType();
@@ -135,9 +130,10 @@ namespace yapc {
                 }
                 else if (value->getType()->isArrayTy()) {
                     func_args.push_back(context.GetBuilder().CreateGlobalStringPtr("%s"));
+                    //func_args.push_back(value);
+                    auto real_arg = std::dynamic_pointer_cast<IdentifierAST>(arg);
+                    auto *value2 = real_arg->GetPtr(context);
                     func_args.push_back(value);
-                    //auto real_arg = std::dynamic_pointer_cast<IdentifierAST>(arg);
-                    //auto *value2 = real_arg->GetPtr(context);
                     //std::string mystr2 = value2->getName().str();
                     //func_args.push_back(context.GetBuilder().CreateGlobalStringPtr(mystr2));
                 }
