@@ -133,7 +133,7 @@ namespace yapc {
                     //func_args.push_back(value);
                     auto real_arg = std::dynamic_pointer_cast<IdentifierAST>(arg);
                     auto *value2 = real_arg->GetPtr(context);
-                    func_args.push_back(value);
+                    func_args.push_back(value2);
                     //std::string mystr2 = value2->getName().str();
                     //func_args.push_back(context.GetBuilder().CreateGlobalStringPtr(mystr2));
                 }

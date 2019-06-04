@@ -77,7 +77,7 @@ NQUOTE [^']
 [0-9]+      {yylval->build<int>(std::stoi(yytext)); std::cout << "Integer: " << yytext; return token::DIGSEQ;}
 [+|-][0-9]+"."[0-9]+   {std::cout << "Sign Real Number: " << yytext; yylval->build<double>(std::stod(yytext)); return token::SIGNEDREALNUMBER;}
 [0-9]+"."[0-9]+   {std::cout << "Real Number: " << yytext; yylval->build<double>(std::stod(yytext)); return token::REALNUMBER;}
-'({NQUOTE}|'')+'  {std::cout << "STRING: " << yytext; yytext[yyleng] = 0; yylval->build<std::string>(std::string(yytext)); return token::LITERAL;}
+'({NQUOTE}|'')+'  {std::cout << "STRING: " << yytext; yytext[yyleng-1] = 0; yylval->build<std::string>(std::string(yytext+1)); return token::LITERAL;}
 [a-zA-Z]([a-zA-Z0-9])*  {std::cout << "IDD: " << yytext << " "; yytext[yyleng] = 0; yylval->build<std::string>(std::string(yytext)); return token::IDENTIFIER;}
 
 "(*" {

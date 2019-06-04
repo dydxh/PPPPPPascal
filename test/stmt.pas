@@ -24,4 +24,5 @@ begin
         writeln(str);
     end;
     writeln(a);
+    writeln(str);
 end.
