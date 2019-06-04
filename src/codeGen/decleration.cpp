@@ -25,7 +25,7 @@ namespace yapc {
             auto IfString = std::dynamic_pointer_cast<yapc::StringAST>(value);
             if (IfString) {
                 auto *constant = llvm::ConstantDataArray::getString(llvm_context, IfString->val, true);
-                llvm::Value *result =  new llvm::GlobalVariable(*context.GetModule(), constant->getType(), true, llvm::GlobalVariable::ExternalLinkage, constant, name->GetName());
+                llvm::Value *result = new llvm::GlobalVariable(*context.GetModule(), constant->getType(), true, llvm::GlobalVariable::ExternalLinkage, constant, name->GetName());
                 return result;
                 //return context.GetBuilder().CreateGlobalString(IfString->val,  this->name->GetName());
             }

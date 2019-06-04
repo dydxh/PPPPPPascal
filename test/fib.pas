@@ -1,29 +1,14 @@
 program fib;
-var
-    a, d : longint;
-    b, c : Real;
-    e, f : array [-1..10] of longint;
-
-procedure foo;
 const
-    test = 1.3;
-    teststr = 'dydxh';
-    function foo2(a, b: longint; e, c: Real) : longint;
-    begin
-        writeln(test + 233);
-        foo2 := 678;
-    end;
+    hello = '---hello pascal---';
 
-begin
-    writeln(test);
-    writeln(foo2(1, 2, 1, 2));
-end;
+var
+    a, d, e, t : longint;
+    b, c : Real;
 
 function fib(n : longint): longint;
-var
-    e, f, g, h : array [-5..10] of integer;
 begin
-    if n >= 0 then
+    if n <= 1 then
     begin
         fib := 1;
     end 
@@ -36,10 +21,17 @@ begin
     end;
 end;
 begin
-    for a := 1 to 10 do begin
-        write('fib ');
-        write(a);
-        write(' : ');
-        writeln(fib(a));
+    writeln(hello);
+    a := 1;
+    d := 1;
+    e := 1;
+    writeln(d);
+    writeln(e);
+    while a < 30 do begin
+        t := d + e;
+        d := e;
+        e := t;
+        writeln(e);
+        a := a + 1;
     end;
 end.

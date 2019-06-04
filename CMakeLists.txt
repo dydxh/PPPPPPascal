@@ -60,5 +60,5 @@ target_include_directories(${CMAKE_PROJECT_NAME}
 set_property(TARGET ${CMAKE_PROJECT_NAME}
         PROPERTY CXX_STANDARD 14)
 
-llvm_map_components_to_libnames(llvm_libs support core irreader)
+llvm_map_components_to_libnames(llvm_libs support core irreader all)
 target_link_libraries(yapc ${llvm_libs})

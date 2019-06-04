@@ -39,4 +39,5 @@ begin
       f := 9;
   end;
   foo();
+
 end.
