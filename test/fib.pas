@@ -11,14 +11,14 @@ begin
     if n <= 1 then
     begin
         fib := 1;
-    end 
+    end
     else if n = 1 then
     begin
         fib := 1;
-    end 
+    end
     else begin
         fib := fib(n - 1) + fib(n - 2);
-    end;
+    end
 end;
 begin
     writeln(hello);

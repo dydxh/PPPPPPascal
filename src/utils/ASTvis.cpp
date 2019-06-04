@@ -218,9 +218,10 @@ int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::StmtAST>&p_stmp)
 int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::IfStmtAST>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
-    int tmp = 0, lines = 0;
+    int tmp = 0, lines = 3;
     of << "child { node {IF Statment if expr}\n";
     tmp = travExpr(p_stmp->expr);
+    of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp; tmp = 0;
     of << "child { node {IF Statment if stmt}\n";
@@ -233,7 +234,6 @@ int yapc::ASTvis::travStmt(const std::shared_ptr<yapc::IfStmtAST>&p_stmp)
     of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp; tmp = 0;
-    of << "}\n";
 
     return lines;
 }

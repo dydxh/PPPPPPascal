@@ -134,12 +134,10 @@ namespace yapc {
                     func_args.push_back(value);
                 }
                 else if (value->getType()->isArrayTy()) {
-                    func_args.push_back(context.GetBuilder().CreateGlobalStringPtr("%s"));
-                    func_args.push_back(value);
-                    //auto real_arg = std::dynamic_pointer_cast<IdentifierAST>(arg);
-                    //auto *value2 = real_arg->GetPtr(context);
-                    //std::string mystr2 = value2->getName().str();
-                    //func_args.push_back(context.GetBuilder().CreateGlobalStringPtr(mystr2));
+                    auto real_arg = std::dynamic_pointer_cast<IdentifierAST>(arg);
+                    auto *value2 = real_arg->GetPtr(context);
+                    std::string mystr2 = value2->getName().str();
+                    func_args.push_back(context.GetBuilder().CreateGlobalStringPtr(mystr2));
                 }
                  //   else if (value->getType()->)
                 // TODO: string support
