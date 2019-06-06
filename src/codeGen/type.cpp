@@ -21,8 +21,19 @@ namespace yapc {
     }
 
     genValue StringAST::codegen(CodeGenUtils &context) {
-        auto *type = llvm::ConstantDataArray::getString(llvm_context, val, true);
-        return type;
+        llvm::Module *M = context.GetModule().get();
+        llvm::LLVMContext& ctx = M->getContext();
+        llvm::Constant *strConstant = llvm::ConstantDataArray::getString(ctx, val);
+        llvm::Type *t = strConstant->getType();
+        llvm::GlobalVariable *GVStr = new llvm::GlobalVariable(*M, t, true, llvm::GlobalValue::ExternalLinkage, strConstant, "");
+        llvm::Constant* zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(ctx));
+        llvm::Constant* indices[] = {zero, zero};
+
+        llvm::Constant *strVal = llvm::ConstantExpr::getGetElementPtr(t, GVStr, indices[0], true);
+
+        return strVal;
+        //auto *type = llvm::ConstantDataArray::getString(llvm_context, val, true);
+        //return type;
     }
 
     llvm::Type *TypeAST::GetType(CodeGenUtils &context) {
@@ -41,7 +52,10 @@ namespace yapc {
         else if (auto *DecType = dynamic_cast<const VoidTypeAST*>(this)) {
             return context.GetBuilder().getVoidTy();  // used for procedure
         }
-        else if (auto *DecType = dynamic_cast<const StringTypeAST*>(this)) {
+        else if (auto *DecType = dynamic_cast<StringTypeAST*>(this)) {
+            return nullptr;
+        }
+        else if (auto *DecType = dynamic_cast<ArrayTypeAST*>(this)) {
             return nullptr;
         }
         else {

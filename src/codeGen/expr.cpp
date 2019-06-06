@@ -151,4 +151,29 @@ namespace yapc {
         }
     }
 
+    genValue ArrayAccessAST::codegen(CodeGenUtils &context) {
+        return context.GetBuilder().CreateLoad(this->GetPtr(context));
+    }
+
+    genValue ArrayAccessAST::GetPtr(CodeGenUtils &context) {
+        llvm::Value *value = context.GetValue(name->GetName());
+        if (!value) {
+            value = context.GetModule().get()->getGlobalVariable(name->GetName());
+        }
+        auto *idx_value = context.GetBuilder().CreateIntCast(this->index->codegen(context), context.GetBuilder().getInt32Ty(), true);
+        auto *value_type = value->getType();
+        auto *ptr_type = value_type->getPointerElementType();
+        std::vector<llvm::Value*> idx;
+        if (ptr_type->isArrayTy()) {
+            idx.push_back(llvm::ConstantInt::getSigned(context.GetBuilder().getInt32Ty(), 0));
+        }
+        else {
+            throw CodegenException("aaa");
+            value = context.GetBuilder().CreateLoad(value);
+        }
+        idx.push_back(idx_value);
+
+        return context.GetBuilder().CreateInBoundsGEP(value, idx);
+    }
+
 }

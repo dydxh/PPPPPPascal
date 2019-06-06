@@ -51,7 +51,8 @@ namespace yapc {
 
         ArrayAccessAST(const std::shared_ptr<IdentifierAST>& ID, const std::shared_ptr<ExprAST>& idx) : name(ID), index(idx) {}
 
-        genValue codegen(genContext context) override {}
+        genValue codegen(genContext context) override;
+        genValue GetPtr(genContext context);
     };
 
     class RecordAccessAST : public ExprAST {

@@ -2,32 +2,16 @@ program a;
 CONST
     b = 1;
     c = 2.2;
-    fuck = 'dydxh';
 VAR
     f : longint;
     g : real;
     h : boolean;
     j : longint;
-
-
-procedure foo;
-CONST
-    test = 1.4;
-    test1 = 1;
-VAR
-    x : longint;
-    function foo2(a, b: longint; e, c: Real) : longint;
-    begin
-        x := 4;
-        foo2 := 678;
-    end;
-begin
-    for f := 1 to 10 do begin
-        j := 1 + b;
-    end;
-end;
+    x : array [0..2] of integer;
 
 begin
+  x[2] := 2;
+  f := x[1];
   if b = 1 then
   begin
       f := 6;
@@ -35,5 +19,6 @@ begin
   else begin
       f := 9;
   end;
-  foo();
+  writeln(x[2]);
+  writeln(x[0]);
 end.

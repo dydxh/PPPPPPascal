@@ -46,7 +46,7 @@ namespace yapc {
             PrintfFunction->setCallingConv(llvm::CallingConv::C);
         }
 
-        llvm::Value *GetValue(std::string key) {
+        llvm::GlobalVariable *GetValue(std::string key) {
             std::vector<std::string>::reverse_iterator r_iter;
             for (r_iter = Traces.rbegin(); r_iter != Traces.rend(); ++r_iter) {
                 auto V = *r_iter;
@@ -76,7 +76,7 @@ namespace yapc {
             return Builder;
         }
         bool is_subroutine = false;
-        std::unique_ptr<llvm::Module> &GetModule() {
+        std::shared_ptr<llvm::Module> &GetModule() {
             return TheModule;
         }
         void dump() {
@@ -91,7 +91,7 @@ namespace yapc {
         std::unique_ptr<llvm::legacy::PassManager> mpm;
         llvm::Function *PrintfFunction;
     private:
-        std::unique_ptr<llvm::Module> TheModule;
+        std::shared_ptr<llvm::Module> TheModule;
         llvm::IRBuilder<> Builder;
         //std::vector<std::map<std::string, llvm::Value *>> NamedValues1;
         //std::map<std::string, llvm::Value *> NamedValues;

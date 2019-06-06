@@ -33,17 +33,26 @@ namespace yapc {
     genValue AssignStmtAST::codegen(CodeGenUtils &context) {
         printf("inside assignment ast.\n");
         // get the lhs pointer, first cast
+        llvm::Value *lhs;
         auto id_cast = std::dynamic_pointer_cast<IdentifierAST>(this->lhs);
-        if (!id_cast) {
-            throw CodegenException("assignment left argument not a identifier.\n");
+        if (id_cast) {
+            lhs = id_cast->GetPtr(context);
         }
-        auto *lhs = id_cast->GetPtr(context);
+        else {
+            auto array_cast = std::dynamic_pointer_cast<ArrayAccessAST>(this->lhs);
+            if (array_cast) {
+                lhs = array_cast->GetPtr(context);
+            }
+            else
+                throw CodegenException("assignment left argument not a identifier.\n");
+        }
         printf("found\n");
         if (std::dynamic_pointer_cast<FuncCallAST>(this->lhs)) {
             printf("It is a custom func call!\n");
         }
 
         auto *rhs = this->rhs->codegen(context);
+        //rhs = context.GetBuilder().CreateLoad(rhs);
 
         auto *lhs_type = lhs->getType()->getPointerElementType();
         auto *rhs_type = rhs->getType();
@@ -53,11 +62,14 @@ namespace yapc {
         }
         else if (!((lhs_type->isIntegerTy(1) && rhs_type->isIntegerTy(1))  // bool
                    || (lhs_type->isIntegerTy(32) && rhs_type->isIntegerTy(32))  // int
-                   || (lhs_type->isDoubleTy() && rhs_type->isDoubleTy()  // float
-                   || (lhs_type->isArrayTy() && rhs_type->isArrayTy())))) // string
+                   || (lhs_type->isDoubleTy() && rhs_type->isDoubleTy()) // float
+                   || (lhs_type->isArrayTy() && rhs_type->isPointerTy())
+                   || (lhs_type->isArrayTy() && rhs_type->isIntegerTy(32)))) // string
         {
             throw CodegenException("incompatible assignment type");
         }
+        auto *lhs_type2 =  lhs->getType()->getPointerElementType();
+        //assert(rhs->getType() == llvm::cast<llvm::PointerType>(lhs->getType())->getElementType());
         context.GetBuilder().CreateStore(rhs, lhs);
         return nullptr;
     }
